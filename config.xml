@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.youbuddy.continental" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>YouBuddy Chatbot</name>
+    <description>YouBuddy Chatbot</description>
+    <author email="youbuddy.yahya@gmail.com">Yahya</author>
+    <content src="index.html" />
+    
+    <!-- Navigation and Intent Permissions -->
+    <allow-navigation href="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    
+    <!-- Preferences -->
+    <engine name="android" spec="12.0.1" />
+    <preference name="AllowInlineMediaPlayback" value="true" />
+    <preference name="android-targetSdkVersion" value="33" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    
+    <!-- Global Access -->
+    <access origin="*" />
+    
+    <!-- Platform Specific Configuration -->
+    <platform name="android">
+        <uses-permission android:name="android.permission.RECORD_AUDIO" />
+        <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.CAMERA" />
+        
+        <uses-feature android:name="android.hardware.camera" android:required="true" />
+        <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+        
+        <!-- Target Android API level 33 (Android 13) -->
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.CAMERA" />
+        </config-file>
+    </platform>
+    
+    <!-- Plugins Configuration -->
+<plugin name="cordova-plugin-file" spec="^8.0.0" />
+
+<!-- <plugin name="cordova-plugin-android-permissions" spec="^1.1.2" /> -->
+<plugin name="cordova-plugin-media-capture" />
+
+<plugin name="cordova-plugin-media" source="npm" />
+
+
+
+    
+    <plugin name="cordova-plugin-camera" spec="6.0.0" />
+    <plugin name="cordova-plugin-inappbrowser" source="npm" spec="5.0.0" />
+    <!-- Other plugins -->
+    
+    
+    
+    
+    <!-- App Resources -->
+    <icon src="youbuddylogo (2) (1) (1).jpg" />
+    <splash src="youbuddysplash.jpg" />
+</widget>
