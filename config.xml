@@ -20,6 +20,7 @@
     <preference name="android-targetSdkVersion" value="33" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     
+    
     <!-- Global Access -->
     <access origin="*" />
     
@@ -30,9 +31,11 @@
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.CAMERA" />
+        <uses-permission android:name="android.permission.CAMERA" />
+<uses-feature android:name="android.hardware.camera" />
+<uses-feature android:name="android.hardware.camera.autofocus" />
         
-        <uses-feature android:name="android.hardware.camera" android:required="true" />
-        <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+        
         
         <!-- Target Android API level 33 (Android 13) -->
         <config-file target="AndroidManifest.xml" parent="/*">
