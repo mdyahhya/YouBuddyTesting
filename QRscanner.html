@@ -147,7 +147,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Product Company Scanner</h1>
+        <h1>Boycott Product Company Scanner</h1>
         
         <div class="tab-buttons">
             <button class="tab-button active" data-tab="scanner">Scanner</button>
@@ -222,7 +222,7 @@ const barcodeDatabase = {
     },
     
     // Nestlé products
-    "6009188002213": {
+    "7613034626844": {
         name: "Nestlé S.A.",
         product: "KitKat Chocolate Bar",
         stance: "avoid",
@@ -273,6 +273,37 @@ const barcodeDatabase = {
 };
 
 let scanning = false;
+let isWebView = false;
+
+// Detect if running in WebView
+function detectWebView() {
+    // Common WebView user agent indicators
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.indexOf('wv') > -1 || 
+        ua.indexOf('android') > -1 && ua.indexOf('version/') > -1 ||
+        window.AndroidInterface !== undefined || 
+        window.webkit && window.webkit.messageHandlers) {
+        console.log("Running in WebView environment");
+        isWebView = true;
+        return true;
+    }
+    return false;
+}
+
+// Initialize app when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded, initializing app");
+    detectWebView();
+    addDiagnosticButton();
+    addManualEntryOption();
+    
+    // Add WebView-specific message if detected
+    if (isWebView) {
+        addWebViewNotice();
+    }
+    
+    checkSecureContext();
+}, false);
 
 // Start scanner button
 document.getElementById('start-button').addEventListener('click', function() {
@@ -315,56 +346,153 @@ document.querySelectorAll('.tab-button').forEach(button => {
     });
 });
 
-// Device ready event handler
-document.addEventListener('deviceready', function() {
+// Device ready event handler - both for Cordova and browser
+function onDeviceReady() {
     console.log("Device is ready");
     
-    // Request camera permission on app start
-    if (navigator.permissions) {
-        navigator.permissions.query({name: 'camera'}).then(function(result) {
-            if (result.state === 'granted') {
-                console.log("Camera permission already granted");
-            } else {
-                console.log("Camera permission state:", result.state);
+    // Handle Cordova environment
+    if (typeof cordova !== 'undefined') {
+        requestCordovaPermissions();
+    } 
+    // Handle WebView that might not have Cordova
+    else if (isWebView) {
+        // Try to access any WebView Bridge that might be available
+        tryWebViewBridge();
+    }
+}
+
+// Try to find and use any available WebView JavaScript bridges
+function tryWebViewBridge() {
+    console.log("Attempting to access WebView bridges");
+    
+    // Try Android WebView interface if available
+    if (window.AndroidInterface) {
+        console.log("Found Android interface bridge");
+        try {
+            // Call a method that might be implemented in the WebView
+            window.AndroidInterface.requestCameraPermission();
+        } catch(e) {
+            console.error("Error calling Android interface:", e);
+        }
+    }
+    
+    // Try iOS WebView interface if available
+    if (window.webkit && window.webkit.messageHandlers) {
+        console.log("Found iOS webkit message handlers");
+        try {
+            // Call a method that might be implemented in the WebView
+            window.webkit.messageHandlers.requestCameraPermission.postMessage({});
+        } catch(e) {
+            console.error("Error calling iOS interface:", e);
+        }
+    }
+}
+
+// Request Cordova permissions
+function requestCordovaPermissions() {
+    if (cordova.plugins && cordova.plugins.permissions) {
+        cordova.plugins.permissions.requestPermission(
+            cordova.plugins.permissions.CAMERA, 
+            function(status) {
+                console.log("Permission status:", status);
+                if (status.hasPermission) {
+                    console.log("Camera permission granted");
+                } else {
+                    console.warn("Camera permission denied");
+                    alert("Camera permission is required for barcode scanning");
+                }
+            }, 
+            function(error) {
+                console.error("Permission request error:", error);
             }
+        );
+    } else if (cordova.plugins && cordova.plugins.androidPermissions) {
+        // Use androidPermissions plugin as fallback
+        const permissions = cordova.plugins.androidPermissions;
+        permissions.requestPermission(permissions.CAMERA, function(status) {
+            if (status.hasPermission) {
+                console.log("Camera permission granted via androidPermissions");
+            } else {
+                console.warn("Camera permission denied");
+                alert("Camera permission is required for barcode scanning");
+            }
+        }, function(error) {
+            console.error("Error requesting permission:", error);
         });
     }
-}, false);
+}
 
-// Improved startScanner function
+// Listen for both Cordova deviceready and normal page load
+document.addEventListener('deviceready', onDeviceReady, false);
+
+// Improved startScanner function with better WebView handling
 function startScanner() {
     document.getElementById('loading').style.display = 'block';
     document.getElementById('result').style.display = 'none';
     
+    // Special handling for WebViews
+    if (isWebView && typeof cordova === 'undefined') {
+        console.log("WebView detected without Cordova, trying alternate approach");
+        startWebViewScanner();
+        return;
+    }
+    
     // Check for Cordova environment first
-    if (typeof cordova !== 'undefined' && cordova.plugins && cordova.plugins.camera) {
-        console.log("Using Cordova camera plugin");
-        // Use the Cordova camera plugin directly
-        cordova.plugins.camera.getPicture(
-            function(imageData) {
-                // Success - got a picture, but we would need additional processing
-                // to detect barcodes from the image
-                console.log("Got image from camera");
-                alert("Camera access successful but barcode detection from images requires additional processing.");
-                document.getElementById('loading').style.display = 'none';
-            },
-            function(error) {
-                console.error("Camera error: " + error);
-                alert("Unable to access camera: " + error);
-                document.getElementById('loading').style.display = 'none';
-            },
-            {
-                quality: 50,
-                destinationType: 0, // DATA_URL
-                sourceType: 1,      // CAMERA
-                encodingType: 0,    // JPEG
-                mediaType: 0,       // PICTURE
-                correctOrientation: true
-            }
-        );
-    } 
-    // Then try the standard browser API
-    else if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (typeof cordova !== 'undefined' && cordova.plugins) {
+        console.log("Using Cordova environment");
+        
+        // Try BarcodeScanner plugin first if available
+        if (cordova.plugins.barcodeScanner) {
+            console.log("Using Cordova BarcodeScanner plugin");
+            cordova.plugins.barcodeScanner.scan(
+                function (result) {
+                    if (!result.cancelled) {
+                        console.log("Barcode scanned: " + result.text);
+                        processBarcodeResult(result.text);
+                    } else {
+                        console.log("Scanning was cancelled");
+                    }
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('start-button').textContent = 'Start Scanner';
+                },
+                function (error) {
+                    console.error("Scanning failed: " + error);
+                    alert("Failed to scan: " + error);
+                    document.getElementById('loading').style.display = 'none';
+                }
+            );
+            return;
+        }
+        // Fallback to camera plugin
+        else if (cordova.plugins.camera) {
+            console.log("Using Cordova camera plugin");
+            cordova.plugins.camera.getPicture(
+                function(imageData) {
+                    console.log("Got image from camera");
+                    alert("Camera access successful but barcode detection from images requires additional processing.");
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('start-button').textContent = 'Start Scanner';
+                },
+                function(error) {
+                    console.error("Camera error: " + error);
+                    alert("Unable to access camera: " + error);
+                    document.getElementById('loading').style.display = 'none';
+                },
+                {
+                    quality: 50,
+                    destinationType: 0, // DATA_URL
+                    sourceType: 1,      // CAMERA
+                    encodingType: 0,    // JPEG
+                    mediaType: 0,       // PICTURE
+                    correctOrientation: true
+                }
+            );
+            return;
+        }
+    }
+    
+    // Standard browser approach for camera access
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         console.log("Using standard browser media API");
         startWebScanner();
     } 
@@ -379,9 +507,7 @@ function startScanner() {
         getUserMedia.call(navigator, 
             { video: { facingMode: "environment" } },
             function(stream) {
-                // Success callback
                 console.log("Camera access successful via legacy API");
-                // Initialize Quagga with the stream
                 startLegacyQuaggaScanner(stream);
             },
             function(err) {
@@ -395,6 +521,100 @@ function startScanner() {
     else {
         console.log("No standard camera API detected, trying direct Quagga initialization");
         directQuaggaStart();
+    }
+}
+
+// Special WebView scanner initialization
+function startWebViewScanner() {
+    console.log("Attempting WebView specific scanner startup");
+    
+    // First try to use any available WebView camera bridge
+    if (window.AndroidInterface && window.AndroidInterface.startCamera) {
+        try {
+            window.AndroidInterface.startCamera();
+            return;
+        } catch(e) {
+            console.error("Error calling AndroidInterface.startCamera:", e);
+        }
+    }
+    
+    // Fallback to standard getUserMedia with specific WebView configurations
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        console.log("Using getUserMedia in WebView");
+        
+        // Use minimal constraints for WebView
+        navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: "environment",
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+            }
+        })
+        .then(function(stream) {
+            console.log("Camera access successful in WebView");
+            
+            // Create a video element to display the camera feed first
+            const videoElement = document.createElement('video');
+            videoElement.id = 'camera-preview';
+            videoElement.style.width = '100%';
+            videoElement.style.height = 'auto';
+            videoElement.autoplay = true;
+            videoElement.playsInline = true; // Important for iOS
+            
+            const interactiveDiv = document.querySelector('#interactive');
+            interactiveDiv.innerHTML = ''; // Clear any existing content
+            interactiveDiv.appendChild(videoElement);
+            
+            // Connect the stream to the video element
+            videoElement.srcObject = stream;
+            videoElement.play().then(() => {
+                console.log("Video playing in WebView");
+                
+                // Now initialize Quagga with this video element
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: videoElement
+                    },
+                    locator: {
+                        patchSize: "medium",
+                        halfSample: true
+                    },
+                    numOfWorkers: 1,
+                    decoder: {
+                        readers: ["ean_reader", "upc_reader"]
+                    },
+                    locate: true
+                }, function(err) {
+                    if (err) {
+                        console.error("Quagga error in WebView:", err);
+                        alert("Scanner failed to initialize in WebView. Please try the manual entry option.");
+                        document.getElementById('loading').style.display = 'none';
+                        return;
+                    }
+                    
+                    scanning = true;
+                    Quagga.start();
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    Quagga.onDetected(handleBarcodeResult);
+                });
+            }).catch(err => {
+                console.error("Video play failed:", err);
+                alert("Failed to start video stream in WebView. Please try manual entry.");
+                document.getElementById('loading').style.display = 'none';
+            });
+        })
+        .catch(function(err) {
+            console.error("WebView camera access error:", err);
+            alert("Unable to access camera in WebView. This may be due to permission issues. Please try manual entry.");
+            document.getElementById('loading').style.display = 'none';
+        });
+    } else {
+        console.log("No camera API available in this WebView");
+        alert("This WebView doesn't support camera access. Please use the manual entry option.");
+        document.getElementById('loading').style.display = 'none';
     }
 }
 
@@ -690,16 +910,46 @@ function addDiagnosticButton() {
     container.appendChild(diagButton);
 }
 
+// Add WebView specific notice
+function addWebViewNotice() {
+    const container = document.querySelector('.container');
+    
+    const notice = document.createElement('div');
+    notice.style.backgroundColor = '#e3f2fd';
+    notice.style.padding = '10px';
+    notice.style.borderRadius = '4px';
+    notice.style.marginTop = '15px';
+    notice.style.border = '1px solid #90caf9';
+    
+    notice.innerHTML = `<p><strong>WebView Environment Detected</strong></p>
+                       <p>You're running this app in a WebView context. If the camera doesn't work, 
+                       please use the manual barcode entry option below, or try opening the app in a regular browser.</p>`;
+    
+    // Insert at top of container
+    container.insertBefore(notice, container.firstChild);
+}
+
 // Run diagnostics
 function runDiagnostics() {
     let diagnosticResults = "CAMERA API DIAGNOSTICS\n";
     diagnosticResults += "--------------------\n\n";
     
+    // Check if in WebView
+    diagnosticResults += "WebView Detected: " + isWebView + "\n";
+    
     // Check Cordova
     diagnosticResults += "Cordova Available: " + (typeof cordova !== 'undefined') + "\n";
     if (typeof cordova !== 'undefined') {
         diagnosticResults += "Cordova Camera Plugin: " + (cordova.plugins && cordova.plugins.camera ? "Available" : "Not Available") + "\n";
+        diagnosticResults += "Cordova Barcode Scanner: " + (cordova.plugins && cordova.plugins.barcodeScanner ? "Available" : "Not Available") + "\n";
+        diagnosticResults += "Cordova Permissions: " + (cordova.plugins && cordova.plugins.permissions ? "Available" : "Not Available") + "\n";
     }
+    
+    // Check Android WebView bridge
+    diagnosticResults += "\nAndroid WebView Interface: " + (window.AndroidInterface !== undefined) + "\n";
+    
+    // Check iOS WebView bridge
+    diagnosticResults += "iOS WebKit Handlers: " + (window.webkit && window.webkit.messageHandlers ? "Available" : "Not Available") + "\n";
     
     // Check getUserMedia support
     diagnosticResults += "\nModern getUserMedia: " + (navigator.mediaDevices && navigator.mediaDevices.getUserMedia ? "Supported" : "Not Supported") + "\n";
@@ -738,14 +988,6 @@ function addManualEntryOption() {
     const orText = document.createElement('p');
     orText.textContent = 'Or enter barcode manually:';
     
-    // Create input field
-    const barcodeInput = document.createElement('input');
-    barcodeInput.type = 'text';
-    barcodeInput.id = 'manual-barcode';
-    barcodeInput.placeholder = 'Enter barcode number';
-    barcodeInput.style.padding = '10px';
-    barcodeInput.style.width = '80%';
-    barcodeInput.style.margin = '10px auto';
     barcodeInput.style.display = 'block';
     barcodeInput.style.borderRadius = '4px';
     barcodeInput.style.border = '1px solid #ccc';
@@ -769,12 +1011,30 @@ function addManualEntryOption() {
     
     // Insert after start button
     startButton.parentNode.insertBefore(manualEntryDiv, startButton.nextSibling);
+    
+    // Add enter key support for the input field
+    barcodeInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const barcode = this.value.trim();
+            if (barcode) {
+                processBarcodeResult(barcode);
+            } else {
+                alert('Please enter a barcode number');
+            }
+        }
+    });
 }
+
 // Add this to your DOMContentLoaded event
 function checkSecureContext() {
     if (window.isSecureContext === false) {
-        alert("Camera access requires HTTPS or localhost! Current protocol: " + location.protocol + 
-              "\n\nPlease access this page via HTTPS or localhost instead of an IP address.");
+        console.warn("Not in secure context - camera access may be restricted");
+        
+        // Only show alert in browser context, not in WebView
+        if (!isWebView) {
+            alert("Camera access requires HTTPS or localhost! Current protocol: " + location.protocol + 
+                "\n\nPlease access this page via HTTPS or localhost instead of an IP address.");
+        }
         
         // Add a visible warning on the page
         const warning = document.createElement('div');
@@ -789,50 +1049,155 @@ function checkSecureContext() {
         document.querySelector('.container').prepend(warning);
     }
 }
-// Add this function to your existing code
+
+// Function to request camera permissions directly
 function requestCameraPermission() {
-    // Check if we're running in a Cordova environment with the permissions plugin
-    if (typeof cordova !== 'undefined' && cordova.plugins && cordova.plugins.androidPermissions) {
-    // Use androidPermissions instead of permissions
-    const permissions = cordova.plugins.androidPermissions;
-       
-        permissions.checkPermission(permissions.CAMERA, function(status) {
-            if (!status.hasPermission) {
-                // Request camera permission
-                permissions.requestPermission(permissions.CAMERA, function(status) {
-                    if (status.hasPermission) {
-                        console.log("Camera permission granted");
-                        // Now it's safe to start the scanner
-                    } else {
-                        console.warn("Camera permission denied");
-                        alert("Camera permission is required for barcode scanning.");
-                    }
-                }, function(error) {
-                    console.error("Error requesting camera permission:", error);
+    if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({name: 'camera'}).then(function(permissionStatus) {
+            console.log("Camera permission status:", permissionStatus.state);
+            
+            // Listen for changes to permission state
+            permissionStatus.onchange = function() {
+                console.log("Camera permission state changed to:", this.state);
+            };
+            
+            if (permissionStatus.state === 'prompt') {
+                // We need to ask for permission, trigger getUserMedia to show the prompt
+                navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    console.log("Camera permission granted");
+                    // Stop the stream right away, we just needed the permission
+                    stream.getTracks().forEach(track => track.stop());
+                })
+                .catch(function(err) {
+                    console.error("Failed to get camera permission:", err);
                 });
-            } else {
-                console.log("Camera permission already granted");
-                // Permission already granted, safe to use camera
             }
-        }, function(error) {
-            console.error("Error checking camera permission:", error);
+        }).catch(function(error) {
+            console.error("Error checking permission:", error);
+        });
+    } else if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Fallback for browsers that don't support permissions API
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            console.log("Camera permission granted (fallback)");
+            // Stop the stream right away, we just needed the permission
+            stream.getTracks().forEach(track => track.stop());
+        })
+        .catch(function(err) {
+            console.error("Failed to get camera permission (fallback):", err);
         });
     }
 }
 
-// Call this in your deviceready event handler
-// In your device ready handler
-document.addEventListener('deviceready', function() {
-    console.log("Device is ready");
-    // Let the camera plugin handle permissions
+// For direct camera access in WebView via custom Android bridge
+function setupWebViewBridge() {
+    // Create a global function that Android WebView can call to process barcode results
+    window.processWebViewBarcode = function(barcode) {
+        console.log("Received barcode from WebView bridge:", barcode);
+        if (barcode && typeof barcode === 'string') {
+            processBarcodeResult(barcode);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('start-button').textContent = 'Start Scanner';
+        }
+    };
+    
+    // Add a direct camera button if we detect WebView environment
+    if (isWebView) {
+        const scannerTab = document.getElementById('scanner-tab');
+        const startButton = document.getElementById('start-button');
+        
+        // Create new button specifically for Android native camera
+        const nativeCameraButton = document.createElement('button');
+        nativeCameraButton.textContent = 'Use Native Camera';
+        nativeCameraButton.style.backgroundColor = '#4caf50';
+        nativeCameraButton.style.marginTop = '10px';
+        
+        // Add event listener to call Android method
+        nativeCameraButton.addEventListener('click', function() {
+            if (window.AndroidInterface && window.AndroidInterface.launchBarcodeScanner) {
+                // Call the Android method
+                window.AndroidInterface.launchBarcodeScanner();
+                document.getElementById('loading').style.display = 'block';
+            } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.launchBarcodeScanner) {
+                // Call the iOS method
+                window.webkit.messageHandlers.launchBarcodeScanner.postMessage({});
+                document.getElementById('loading').style.display = 'block';
+            } else {
+                alert("Native camera bridge not available in this WebView");
+            }
+        });
+        
+        // Insert before the start button
+        startButton.parentNode.insertBefore(nativeCameraButton, startButton);
+    }
+}
+
+// Call setupWebViewBridge when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setupWebViewBridge();
 }, false);
 
-// Call this function
-checkSecureContext();
-// Initialize additional features when the page loads
+// Add a function to test specific barcodes when clicked
+function makeTestBarcodesClickable() {
+    const barcodeItems = document.querySelectorAll('.barcode-item');
+    
+    barcodeItems.forEach(item => {
+        const barcodeNumber = item.querySelector('.barcode-number');
+        
+        if (barcodeNumber) {
+            barcodeNumber.style.cursor = 'pointer';
+            barcodeNumber.style.color = '#4285f4';
+            barcodeNumber.style.textDecoration = 'underline';
+            
+            barcodeNumber.addEventListener('click', function() {
+                const barcode = this.textContent.trim();
+                
+                // Switch to scanner tab first
+                document.querySelector('.tab-button[data-tab="scanner"]').click();
+                
+                // Process the barcode
+                processBarcodeResult(barcode);
+            });
+        }
+    });
+}
+
+// Call on page load
 document.addEventListener('DOMContentLoaded', function() {
+    makeTestBarcodesClickable();
+}, false);
+
+// Check for orientation changes which might affect camera
+window.addEventListener('orientationchange', function() {
+    console.log("Orientation changed");
+    
+    if (scanning) {
+        // Restart scanner with short delay to allow orientation to complete
+        stopScanner();
+        setTimeout(function() {
+            startScanner();
+        }, 500);
+    }
+});
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Initializing application");
+    detectWebView();
     addDiagnosticButton();
     addManualEntryOption();
+    makeTestBarcodesClickable();
+    
+    if (isWebView) {
+        addWebViewNotice();
+        setupWebViewBridge();
+    }
+    
+    checkSecureContext();
+    
+    // Request camera permission early
+    setTimeout(requestCameraPermission, 1000);
 }, false);
     </script>
 </body>
