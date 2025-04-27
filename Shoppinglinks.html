@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Links</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #4285F4;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .product-list {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .category {
+            border-bottom: 1px solid #eee;
+            padding: 10px 15px;
+            background-color: #f9f9f9;
+        }
+        .category h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .links {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .links li {
+            border-bottom: 1px solid #eee;
+        }
+        .links li:last-child {
+            border-bottom: none;
+        }
+        .links a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        .links a:after {
+            content: "›";
+            position: absolute;
+            right: 15px;
+            font-size: 20px;
+            color: #999;
+        }
+        .links a:hover {
+            background-color: #f0f7ff;
+        }
+        .logo {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Product Links</h1>
+        </header>
+        
+        <div class="product-list">
+            <div class="category">
+                <h2>E-commerce</h2>
+            </div>
+            <ul class="links" id="ecommerce-links">
+                <li><a href="https://www.flipkart.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwN0JGRiIgZD0iTTQuMTcyIDMuMTQyQzQgMy40ODkgNCA0LjAwMyA0IDUuMDN2MTMuOTRjMCAxLjAyNyAwIDEuNTQxLjE3MiAxLjg4OC4xNTIuMzA2LjM5NS41NDkuNzAxLjcwMS4zNDcuMTcyLjg2LjE3MiAxLjg4OC4xNzJoMTAuNDc4YzEuMDI3IDAgMS41NDEgMCAxLjg4OC0uMTcyLjMwNi0uMTUyLjU0OS0uMzk1LjcwMS0uNzAxLjE3Mi0uMzQ3LjE3Mi0uODYuMTcyLTEuODg4VjUuMDNjMC0xLjAyNyAwLTEuNTQtLjE3Mi0xLjg4OC0uMTUyLS4zMDYtLjM5NS0uNTQ5LS43MDEtLjcwMUMxOC43OCAxLjI2OSAxOC4yNjYgMS4yNjkgMTcuMjQgMS4yNjlINi43NmMtMS4wMjcgMC0xLjU0IDAtMS44ODguMTcyLS4zMDYuMTUyLS41NDkuMzk1LS43MDEuNzAxWiIvPjxwYXRoIGZpbGw9IiNGRUZFRkUiIGQ9Ik0xNCAxNi42MzJsLTEtMS4yNjRMOS4yMzcgMTBoMi41MjZsMS41IDIuOTgzTDE1IDEwaDJsLTMgNi42MzJaIi8+PC9zdmc+" class="logo" alt="Flipkart">Flipkart</a></li>
+                <li><a href="https://www.meesho.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0YwNUE5MCIgZD0iTTEyIDJDNi40NzcgMiAyIDYuNDc3IDIgMTJzNC40NzcgMTAgMTAgMTAgMTAtNC40NzcgMTAtMTBTMTcuNTIzIDIgMTIgMnptLTIuNSA0LjVhMS41IDEuNSAwIDEgMSAwIDMgMS41IDEuNSAwIDAgMSAwLTN6bTUgMGExLjUgMS41IDAgMSAxIDAgMyAxLjUgMS41IDAgMCAxIDAtM3ptMS41IDdhNSA1IDAgMCAxLTEwIDBoMS41YTMuNSAzLjUgMCAwIDAgNyAweiIvPjwvc3ZnPg==" class="logo" alt="Meesho">Meesho</a></li>
+                <li><a href="https://www.amazon.in/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0ZGOTkwMCIgZD0iTTIxLjM4NSAxOS4zODNjLS4wNy0uMDUyLTEuNy0xLjItNC40Mi0xLjQ4NGEuNTQ0LjU0NCAwIDAgMS0uNDgtLjU3Ni41MTUuNTE1IDAgMCAxIC41OC0uNDljMy4xNDQuMzI3IDQuOTkzIDEuNzM3IDUuMDYzIDEuOCAxLjEwMi44NzMuMTYzIDEuNjczLS4wMjEgMS44NDQtLjE5NC4xNzUtLjc0Ny4yLTEuMjI1LS4wMzEtLjE1LS4wNzctMi41MjEtMS4zNS02LjUwMi0xLjM1LTQuNDkgMC02LjUgMS4zOS02LjUgMS4zOS0uMzYuMTg3LS45NDMuMDE2LTEuMTc3LS4xODQtLjM4Ni0uMzI3LS44NDctMS4wODIuMDQyLTEuODQ0YTEwLjY3OCAxMC42NzggMCAwIDAgMS42LTEuNTAxYTcuNTAyIDcuNTAyIDAgMCAxIC4wMjItMTAuOTM0IDguMzggOC4zOCAwIDAgMSA1Ljk3Ny0yLjQ4NiA4LjQwOCA4LjQwOCAwIDAgMSA1Ljk3NiAyLjQ4NiA3LjUwMiA3LjUwMiAwIDAgMSAuMDI5IDEwLjkzNEExMS40MzkgMTEuNDM5IDAgMCAwIDIxLjM4NiAxOS4zOFoiLz48cGF0aCBmaWxsPSIjRkZEODVEIiBkPSJNMTEuOTk1IDRBNy45ODggNy45ODggMCAwIDAgNC4wMSAxMmE3Ljk4OCA3Ljk4OCAwIDAgMCA3Ljk4NyA4IDcuOTg3IDcuOTg3IDAgMCAwIDcuOTg2LTggNy45ODggNy45ODggMCAwIDAtNy45ODctOFoiLz48L3N2Zz4=" class="logo" alt="Amazon">Amazon</a></li>
+                <li><a href="https://www.myntra.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0ZGOTE1NyIgZD0iTTIxLjk5MyAxOC43NEg1Ljk0OEw0LjAwNyAyLjVoMTcuOTg2djE2LjI0WiIvPjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik03LjEgMTguNzRINS4wMDdBLjc1Ljc1IDAgMCAxIDQuMjYgMTcuOTlMMi4wMDcgMS43NWEuNzUuNzUgMCAwIDEgLjc0OC0uNzVIMjJhLjc1Ljc1IDAgMCAxIC43NS43NXYxNi4yNGEuNzUuNzUgMCAwIDEtLjc1Ljc1SDcuMVoiLz48cGF0aCBmaWxsPSIjRUYyQzczIiBkPSJNMTUuOTgzIDYuNWMtLjUwNSAwLS45MSAuNDA2LS45MS45MS4wMDIuMDM0LjAwMi4wNjguMDEyLjEwMi4wMS4wMzQuMDIuMDY4LjAzNS4xLjE0LjMzLjQ3LjU2OC44NjMuNTY3LjM5MyAwIC43MjUtLjIzNy44NjMtLjU3QTEuMDYgMS4wNiAwIDAgMCAxNi44OTIgNy40YzAtLjQ5Ny0uNDA3LS45LS45MDgtLjl6bS00LjAyLjA1OGMtLjUwMyAwLS45MS40MDYtLjkxLjkxcy40MDcuOTEuOTEuOTFjLjUwMyAwIC45MS0uNDA2LjkxLS45MXMtLjQwNy0uOTEtLjkxLS45MXptNi4wMyAwYy0uNTA0IDAtLjkxLjQwNi0uOTEuOTFzLjQwNi45MS45MS45MWMuNTA0IDAgLjkxLS40MDYuOTEtLjkxcy0uNDA2LS45MS0uOTEtLjkxek0xMy45OCAxOS43OWMtLjg5NCAwLTEuNjE3LS43MjMtMS42MTctMS42MTdWMTEuOTloMy4yMzZ2Ni4xODRjMCAuODk0LS43MjYgMS42MTctMS42MiAxLjYxN3ptLTMuMSAwYy0uODk0IDAtMS42MTctLjcyMy0xLjYxNy0xLjYxN1YxMS45OWgzLjIzNXY2LjE4NGMwIC44OTQtLjcyNSAxLjYxNy0xLjYxOCAxLjYxN3ptLTMuMSAwYy0uODk0IDAtMS42MTctLjcyMy0xLjYxNy0xLjYxN1YxMS45OWgzLjIzNXY2LjE4NGMwIC44OTQtLjcyNSAxLjYxNy0xLjYxOCAxLjYxN3ptOS4yOTggMGMtLjg5NCAwLTEuNjE3LS43MjMtMS42MTctMS42MTdWMTEuOTloMy4yMzZ2Ni4xODRjMCAuODk0LS43MjYgMS42MTctMS42MiAxLjYxN3pNMTIgMTAuMDY4Yy0uNTAzIDAtLjkxLS40MDYtLjkxLS45MXMuNDA3LS45MS45MS0uOTFjLjUwMyAwIC45MS40MDYuOTEuOTFzLS40MDcuOTEtLjkxLjkxeiIvPjwvc3ZnPg==" class="logo" alt="Myntra">Myntra</a></li>
+            </ul>
+            
+            <div class="category">
+                <h2>Google Products</h2>
+            </div>
+            <ul class="links" id="google-links">
+                <li><a href="https://www.google.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzQyODVGNCIgZD0iTTIyLjU2IDEyLjI1YzAgLjc4LS4wNyAxLjUzLS4yIDIuMjVIMTJ2LTQuMjZoNS45MjFjLS4yNTUtMS40NzItMS4wNC0yLjctMi4xNjgtMy41M1Y0LjUxaDUuMjA0QzIwLjI0NSA2LjU2IDIxLjU4IDkuMjMgMjEuNTggMTIuMjVoLjk4WiIvPjxwYXRoIGZpbGw9IiMzNEE4NTMiIGQ9Ik0xMiAyM2M0LjQzIDAgOC4xNC0xLjQ3IDEwLjg0LTMuOTdsLTUuMjctNC4xNGMtMS40Ni45OC0zLjMzIDEuNTYtNS41NiAxLjU2LTQuMjggMC03Ljg5LTIuOS05LjE4LTYuNzdMMi40IDE0LjE3djEuMjZDNS4wOCAyMC4yMSA4LjMgMjMgMTIgMjNaIi8+PHBhdGggZmlsbD0iI0ZCQkMwNSIgZD0iTTIuODIgOS42NGMtLjMyLS45OS0uNTEtMi4wMy0uNTEtMy4xMXMuMTktMi4xMi41MS0zLjExVjIuMTdIMi40QzEuMTIgMy45LjQyIDUuODcuNDIgOC4wM2MwIDIuMTYuNzEgNC4xNCAxLjk4IDUuOWwuNDItNS4yOVoiLz48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNMTIgMy40NWMxLjg2IDAgMy41My42NCA0Ljg0IDEuNjdsNC4wNy00LjA3QzE4LjgxLjQxIDE1LjY0IDAgMTIgMGMtMy43IDAtNi45MiAyLjc5LTguNjEgNi42N2wyLjQxIDIuNDFDNy4xIDYuMzUgOS4zNyAzLjQ1IDEyIDMuNDVaIi8+PC9zdmc+" class="logo" alt="Google">Google Search</a></li>
+                <li><a href="https://mail.google.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0U2NTY1NiIgZD0iTTIyIDE4aDJ2LTEySDB2MTJoMnYtOC44bDkuNSA0LjhMMjEgOS4yVjE4WiIvPjxwYXRoIGZpbGw9IiNGMkYyRjIiIGQ9Ik0wIDZWNGEyIDIgMCAwIDEgMi0yaDIwYTIgMiAwIDAgMSAyIDJ2MmwtMTIgNkwwIDZaIi8+PC9zdmc+" class="logo" alt="Gmail">Gmail</a></li>
+                <li><a href="https://drive.google.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzIyQTc2RCIgZD0iTTkuMzI0IDI0bDUuMzUyLTkuMjY3LTguNTExLS4wMDJMOS4zMjIgMjRaIi8+PHBhdGggZmlsbD0iIzQwOEJGQyIgZD0iTTE2LjA3MyAyNGguMDAxbDguNTE2LTE0Ljc1MWwtNC4zMi03LjVMMTYuMDc0IDI0WiIvPjxwYXRoIGZpbGw9IiNGQUJDMDQiIGQ9Ik0xMi4xNSAxMy42NTdMMTQuNzMgOC40OWwtNy45Ny0uMDIxIDUuMzkgNS4xODhaIi8+PHBhdGggZmlsbD0iIzRFOEVDRSIgZD0iTTcuODM0IDI0TDEyLjE2IDEzLjc1MkwxNC43MjkgOC41bC03Ljk3LS4wMjNMMCA4LjVsMi43NSA0Ljc2NHoiLz48L3N2Zz4=" class="logo" alt="Google Drive">Google Drive</a></li>
+                <li><a href="https://www.google.com/chrome/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzQyODVGNCIgZD0iTTEyIDJjNS41MiAwIDEwIDQuNDggMTAgMTBzLTQuNDggMTAtMTAgMTAgLTEwLTQuNDgtMTAtMTBjMCAuNjUuMDcgMS4yOS4xOSAxLjlMNy4yIDkuNmMxLjAzLTEuNjQgMi44NC0yLjc0IDQuOTEtMi43NHoiLz48cGF0aCBmaWxsPSIjMzRBODUzIiBkPSJNMTIgMTZjLTIuMjEgMC00LTEuNzktNC00czEuNzktNCA0LTQgNCAxLjc5IDQgNC0xLjc5IDQtNCA0eiIvPjxwYXRoIGZpbGw9IiNGQkJDMDQiIGQ9Ik0zLjI3IDExLjE3YzAgLjExLjAyLjIxLjAzLjMxbDQuODggOC40Yy0xLjc4LS44MS0zLjI2LTIuMi00LjE0LTMuOTEtLjY1LTEuMjYtMS0yLjY3LTEtNC4xN2gtLjAyYy4wMi0uMjEuMDUtLjQyLjA5LS42M0wzLjI3IDExLjE3eiIvPjxwYXRoIGZpbGw9IiNFQTQzMzUiIGQ9Ik0xMiA4LjVjLjkxIDAgMS43Ni4yNiAyLjUuNjhsNS43Mi05LjkxQzE4LjI5LjE3IDE1LjQgMCAxMiAwaC0uMDFMMy4yOCAxMS4xN0M0LjUgOS40NyA2LjY0IDguNSA5IDguNWgzeiIvPjwvc3ZnPg==" class="logo" alt="Chrome">Google Chrome</a></li>
+                <li><a href="https://play.google.com/store/apps"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzgwQzI1NyIgZD0iTTMuNjQzIDIwLjQwMkwxMi4yMzYgMTJsLTguNTkzLTguNDAyQTIuMzU1IDIuMzU1IDAgMCAwIDMgNC4xODF2MTUuNjM4YzAgLjIzNS4wNTIuNDYuMTQzLjY2MnoiLz48cGF0aCBmaWxsPSIjOEVDRTdEIiBkPSJNMy42NDMgMy41OThsOC41OTMgOC40MDJMMTUuNDU1IDlIOC4yMzZMNi4zNyA3LjEzMyA0LjUgNS4yNjdjLS4zMDYtLjYwMi0uNjg3LTEuMDQ4LS44NTctMS42N3oiLz48cGF0aCBmaWxsPSIjMzE4REVGIiBkPSJNMy42NDMgMjAuNDAyQzMuODMgMjAuODU1IDQuMTY3IDIxLjI0MyA0LjYgMjEuNWMuNDY1LjI3NiAxLjAuNDMyIDEuNTc1LjQzMmE0LjQ0IDQuNDQgMCAwIDAgLjg1Mi0uMDg0TDEyLjIzNiAxMmwtMy4yMTgtMy4xNDYtNS4zNzUgMTEuNTQ4WiIvPjxwYXRoIGZpbGw9IiNFQTQzMzUiIGQ9Im0yMS40MTggMTAuMjczLTMuODkyLTIuMjUyLTQuNTgzIDRMMTIuMjM2IDEybDUuMjgzIDNMMjEuNDQgMTMuMjU3YTIuMzUzIDIuMzUzIDAgMCAwIC4wODItMi45OThjLS4wMi0uMDQtLjA2MS0uMDI1LS4xMDQtLjAyNnoiLz48cGF0aCBmaWxsPSIjRkZCQTA1IiBkPSJNMTcuNTI2IDguMDJsLTIuMjMtMS4yOWMtLjUxOC0uMzAxLS45NTQtLjQ4Ni0xLjM2My0uNTk1YTMuNjggMy42OCAwIDAgMC0uNjgzLS4wNjhjLS40MjQgMC0uODQ4LjA2NS0xLjI1My4xOTItLjQxMi4xMy0uNzk5LjMzLTEuMTQzLjU5MUw3LjAxOCA1LjU3M2MuMTcuNjIyLjU1IDEuMDY4Ljg1OCAxLjY3TDEyLjIzNiAxMmw1LjI5LTMuOTh6Ii8+PC9zdmc+" class="logo" alt="Play Store">Google Play Store</a></li>
+            </ul>
+            
+            <div class="category">
+                <h2>Other Popular Sites</h2>
+            </div>
+            <ul class="links" id="other-links">
+                <li><a href="https://www.youtube.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0ZGMDA0RiIgZD0iTTIyLjU0IDYuNDJhMi43OCAyLjc4IDAgMCAwLTEuOTQtMmMtMS43MS0uNDYtOC41Ny0uNDYtOC41Ny0uNDZzLTYuODYgMC04LjU3LjQ2YTIuNzggMi43OCAwIDAgMC0xLjk0IDJBMjkgMjkgMCAwIDAgMSAxMi4wMWEyOSAyOSAwIDAgMCAuNTMgNS41OSAyLjc4IDIuNzggMCAwIDAgMS45NCAyYzEuNzEuNDYgOC41Ny40NiA4LjU3LjQ2czYuODYgMCA4LjU3LS40NmEyLjc4IDIuNzggMCAwIDAgMS45NC0yIDI5IDI5IDAgMCAwIC41My01LjU5IDI5IDI5IDAgMCAwLS41My01LjU5WiIvPjxwb2x5Z29uIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iOS43NSAxNS4wMiAxNS41IDEyLjAxIDkuNzUgOS4wMSA5Ljc1IDE1LjAyIi8+PC9zdmc+" class="logo" alt="YouTube">YouTube</a></li>
+                <li><a href="https://www.facebook.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzE4NzdGMiIgZD0iTTEyIDJDNi40NzcgMiAyIDYuNDc3IDIgMTJhOS45OTMgOS45OTMgMCAwIDAgOC41MDggOS42OTN2LTYuODcxSDguMDMxdi0yLjg0aDIuNDc3di0yLjE2M2MwLTIuNDQzIDEuNDU1LTMuNzkgMy42ODQtMy43OSAxLjA2OCAwIDIuMTg3LjE5MiAyLjE4Ny4xOTJ2Mi4zOTdoLTEuMjMxYy0xLjIxNSAwLTEuNTkzLjc1Mi0xLjU5MyAxLjUyNnYxLjgzOGgyLjcxMWwtLjQzMyAyLjg0aC0yLjI3OHY2Ljg3MUMxOC45OTIgMjEuOTk1IDIyIDE3LjUyIDIyIDEyYzAtNS41MjMtNC40NzctMTAtMTAtMTB6Ii8+PC9zdmc+" class="logo" alt="Facebook">Facebook</a></li>
+                <li><a href="https://www.instagram.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0idXJsKCNpbnN0YWdyYW1fZ3JhZCkiIGQ9Ik0xMiAyQzYuNDc3IDIgMiA2LjQ3NyAyIDEyczQuNDc3IDEwIDEwIDEwIDEwLTQuNDc3IDEwLTEwUzE3LjUyMyAyIDEyIDJ6Ii8+PHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTE0Ljk1NyA2SDkuMDQzQzcuNDIyIDYgNiA3LjQyMiA2IDkuMDQzdjUuOTE0QzYgMTYuNTc4IDcuNDIyIDE4IDkuMDQzIDE4aDUuOTE0QzE2LjU3OCAxOCAxOCAxNi41NzggMTggMTQuOTU3VjkuMDQzQzE4IDcuNDIyIDE2LjU3OCA2IDE0Ljk1NyA2ek0xMiAxNS4wMDNhMy4wMDMgMy4wMDMgMCAxIDEgMC02LjAwNiAzLjAwMyAzLjAwMyAwIDAgMSAwIDYuMDA2em0zLjk1Mi02LjgxMmEuNzUuNzUgMCAxIDEgMC0xLjUuNzUuNzUgMCAwIDEgMCAxLjV6Ii8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJpbnN0YWdyYW1fZ3JhZCIgeDE9IjAlIiB5MT0iMTAwJSIgeDI9IjEwMCUiIHkyPSIwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0ZGRDYwMCIvPjxzdG9wIG9mZnNldD0iMzAlIiBzdG9wLWNvbG9yPSIjRkYwMDgwIi8+PHN0b3Agb2Zmc2V0PSI1NSUiIHN0b3AtY29sb3I9IiNGRjAwODAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM4MTAwRkYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=" class="logo" alt="Instagram">Instagram</a></li>
+                <li><a href="https://twitter.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzE4OTRmZiIgZD0iTTIxLjU3OSAyLjA3MmMtLjY1MS4zNzgtMS4zMzEuNjM1LTIuMDI2Ljc0OS0uNTc5LS42MTgtMS4zODctLjk5OS0yLjI5LS45OTktMS43MzEgMC0zLjEzNCAxLjQxNi0zLjEzNCAzLjE1OSAwIC4yNDcuMDI3LjQ4Ny4wODEuNzE4LTIuNTgzLS4xMjctNC45MDMtMS4zNzUtNi40NDctMy4yNjctLjI3NS40NjgtLjQyNyAxLjAwNS0uNDI3IDEuNTY5IDAgMS4wODUuNTUxIDIuMDQ2IDEuMzkxIDIuNjEyLS41MTYtLjAxNi0xLjAwOC0uMTU4LTEuNDQyLS4zOTR2LjA0YzAgMS41MjEgMS4wODEgMi43OSAyLjUxNCAzLjA3N2MtLjI0OC4wNjktLjU1MS4xMDMtLjg0My4xMDMtLjIwNyAwLS40MjctLjAyMS0uNjE5LS4wNjJjLjM5OSAxLjI0NyAxLjU1NyAyLjE0NiAyLjkyOCAyLjE3LTEuMDczLjg0MS0yLjQzIDEuMzQyLTMuODUyIDEuMzQyLS4yNTEgMC0uNTAzLS4wMTUtLjc0OC0uMDQ1IDEuMzkxLjg5MSAzLjA0MyAxLjQxMSA0LjgyIDEuNDExIDUuNzY2IDAgOC45MjMtNC43OTMgOC45MjMtOC45NDcgMC0uMTM3LS4wMDQtLjI3Mi0uMDExLS40MDYuNjE1LS40NDEgMS40NS0uOTg3IDEuOTA1LTEuNjEtLjU1NC4yNDgtMS4xNzQuNDE1LTEuODE0LjQ4OS42NTItLjM4OSAxLjE3Mi0xLjAwNiAxLjQwOS0xLjc0My0uNjA5LjM2NS0xLjI5OC42My0yLjAyMi43NzJ6Ii8+PC9zdmc+" class="logo" alt="Twitter">Twitter</a></li>
+                <li><a href="https://www.linkedin.com/"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwNzdCNSIgZD0iTTEyIDJDNi40NzcgMiAyIDYuNDc3IDIgMTJzNC40NzcgMTAgMTAgMTAgMTAtNC40NzcgMTAtMTBTMTcuNTIzIDIgMTIgMnpNOC4xOTMgMTcuNTk2SDUuNTg1VjkuMDU0aDIuNjA4djguNTQyek02Ljk4MSA4LjAzNmMtLjc5MSAwLTEuNDI4LS42MzctMS40MjgtMS40MjcgMC0uNzg1LjYzNy0xLjQyMiAxLjQyOC0xLjQyMi43OTEgMCAxLjQyOC42MzcgMS40MjggMS40MjIgMCAuNzktLjYzNyAxLjQyNy0xLjQyOCAxLjQyN3ptMTAuNjYyIDkuNTZoLTIuNjA0di00LjIzNGMwLTEuMTU5LS40MjYtMS45NTItMS40NjEtMS45NTItMS4yMzYgMC0xLjg2MS44ODMtMS44NjEgMS45NTJ2NC4yMzRoLTIuNDk4VjkuMDU0aDIuNDk4djEuMDgzYy41MTQtLjgxMSAxLjQxNi0xLjMyOCAyLjQ5OC0xLjMzMyAxLjggMCAzLjQyOCAxLjA5IDMuNDI4IDMuNDExdjUuMzgxeiIvPjwvc3ZnPg==" class="logo" alt="LinkedIn">LinkedIn</a></li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>© 2025 Product Links App | All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <script>
+        // Add click tracking functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all link elements
+            const links = document.querySelectorAll('.links a');
+            
+            // Add click event listener to each link
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // You can add analytics tracking here if needed
+                    console.log('Clicked:', this.href);
+                    
+                    // Allow the default behavior (opening the link)
+                    // If you want to modify how links open, you can do it here
+                    // e.preventDefault();
+                    // window.open(this.href, '_system'); // For opening in system browser
+                });
+            });
+            
+            // Add ripple effect on touch
+            links.forEach(link => {
+                link.addEventListener('touchstart', function(e) {
+                    this.style.backgroundColor = '#f0f7ff';
+                    setTimeout(() => {
+                        this.style.backgroundColor = '';
+                    }, 300);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
