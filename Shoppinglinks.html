@@ -196,6 +196,11 @@ function openFlipkartApp() {
                 });
             });
         });
+        document.addEventListener('deviceready', onDeviceReady, false);
+function onDeviceReady() {
+    // App is ready to use these features
+    console.log('Device is ready');
+}
     </script>
 </body>
 </html>
