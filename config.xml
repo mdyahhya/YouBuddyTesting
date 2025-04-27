@@ -19,6 +19,31 @@
     <preference name="AllowInlineMediaPlayback" value="true" />
     <preference name="android-targetSdkVersion" value="33" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <!-- InAppBrowser Configuration -->
+<preference name="InAppBrowserStorageEnabled" value="true" />
+<preference name="SuppressesIncrementalRendering" value="false" />
+
+<!-- Status Bar Configuration -->
+<preference name="StatusBarOverlaysWebView" value="false" />
+<preference name="StatusBarBackgroundColor" value="#4285F4" />
+<preference name="StatusBarStyle" value="lightcontent" />
+
+<!-- Splash Screen Configuration -->
+<preference name="SplashScreenDelay" value="2000" />
+<preference name="AutoHideSplashScreen" value="true" />
+<preference name="SplashScreenBackgroundColor" value="0xffffffff" />
+
+<!-- For opening external apps -->
+<allow-intent href="market:*" />
+<allow-intent href="intent:*" />
+
+<!-- Additional permissions for Android -->
+<platform name="android">
+    <!-- Your existing permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+</platform>
     
     
     <!-- Global Access -->
