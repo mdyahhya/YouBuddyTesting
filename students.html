@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobCenter - Job Feed</title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    tap-highlight-color: rgba(0, 0, 0, 0);
+    outline: none;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8fafc;
+    min-height: 100vh;
+    color: #333;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 100vw;
+    max-width: 375px;
+    height: 100vh;
+    max-height: 770px;
+    margin: 0 auto;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    border-radius: 0;
+}
+
+.header {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    width: 100%;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.logout-icon {
+    width: 14px;
+    height: 14px;
+}
+
+/* Taskbar Styles for Mobile Container */
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 375px; /* Match your container max-width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px 20px;
+    gap: 8px;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.taskbar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #666;
+    min-width: 60px;
+    text-align: center;
+    position: relative;
+    text-decoration: none;
+    user-select: none;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.taskbar-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    transform: translateY(-1px);
+}
+
+.taskbar-item:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+.taskbar-item.active {
+    background: rgba(0, 0, 0, 0.08);
+    color: #333;
+    cursor: default;
+}
+
+.taskbar-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 2px;
+    background: #667eea;
+    border-radius: 2px;
+}
+
+.taskbar-icon {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 2px;
+    transition: all 0.2s ease;
+    stroke-width: 1.5; /* Make icons thinner */
+}
+
+.taskbar-item:hover .taskbar-icon {
+    transform: scale(1.05);
+}
+
+.main-content {
+    flex: 1;
+    padding: 15px;
+    padding-bottom: 80px; /* Add bottom padding for fixed taskbar */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-bottom: 15px;
+    align-self: flex-start;
+    transition: all 0.2s ease;
+}
+
+.menu-btn:hover {
+    background: #1d4ed8;
+}
+
+.job-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.job-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+}
+
+.job-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.job-header {
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.company-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.company-details h3 {
+    font-size: 1rem;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.company-details .location {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.job-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.job-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.meta-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.job-content {
+    padding: 0 15px;
+}
+
+.job-description {
+    color: #475569;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.skill-tag {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.job-actions {
+    padding: 15px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.apply-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+}
+
+.apply-btn:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-1px);
+}
+
+.read-more-btn {
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.read-more-btn:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.salary {
+    color: #059669;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.post-time {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    text-align: right;
+}
+
+/* Message styles */
+.message {
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: 500;
+    display: none;
+    font-size: 0.9rem;
+}
+
+.success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 320px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Slide menu styles */
+.slide-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: white;
+    z-index: 1001;
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.slide-menu.active {
+    right: 0;
+}
+
+.slide-menu a {
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s ease;
+}
+
+.slide-menu a:hover {
+    background: #f8fafc;
+}
+
+.close-btn {
+    align-self: flex-end;
+    padding: 10px 20px !important;
+    font-size: 24px !important;
+    border-bottom: none !important;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+}
+
+.menu-overlay.active {
+    display: block;
+}
+
+/* Extra small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+    .container {
+        padding: 0;
+        max-width: 100vw;
+    }
+    
+    .header {
+        padding: 10px 0;
+    }
+    
+    .header-content {
+        padding: 0 12px;
+    }
+    
+    .logo {
+        font-size: 1.3rem;
+    }
+    
+    .logout-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    .logout-icon {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .taskbar {
+        padding: 6px 0;
+        top: 58px;
+    }
+    
+    .taskbar-item {
+        padding: 6px 4px;
+        font-size: 0.65rem;
+        min-width: 45px;
+    }
+    
+    .taskbar-icon {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .main-content {
+        padding: 12px;
+    }
+    
+    .job-card {
+        margin: 0;
+    }
+    
+    .job-header {
+        padding: 12px;
+    }
+    
+    .job-content {
+        padding: 0 12px;
+    }
+    
+    .job-actions {
+        padding: 12px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .company-logo {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .job-title {
+        font-size: 1rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        max-width: 300px;
+        margin: 15% auto;
+        padding: 15px;
+    }
+}
+
+        * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Disable highlight on Android Chrome/WebView */
+    tap-highlight-color: rgba(0, 0, 0, 0);        /* Disable highlight on other Android browsers */
+    outline: none;                                /* Remove outline for better UI */
+    touch-action: manipulation;                  /* Optimize touch behavior */
+    -webkit-user-select: none;                   /* Prevent selection */
+    user-select: none;                           /* Prevent selection for other browsers */
+    -webkit-touch-callout: none;                 /* Disable callout menu on long press */
+}
+
+
+
+
+
+
+
+
+/* Taskbar Styles for Mobile Container */
+
+.taskbar-item span {
+    font-size: 10px;
+    font-weight: 400; /* Thin font weight */
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+}
+
+/* Loading state styles */
+.taskbar-item.loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.taskbar-item.loading .taskbar-icon {
+    animation: spin 1s linear infinite;
+}
+
+/* Disabled state for empty/more option */
+.taskbar-item[data-page="#"] {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.taskbar-item[data-page="#"]:hover {
+    background: transparent;
+    transform: none;
+}
+
+/* Animations */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 375px) {
+    .taskbar {
+        padding: 6px 15px;
+        gap: 4px;
+    }
+    
+    .taskbar-item {
+        padding: 6px 8px;
+        min-width: 50px;
+    }
+    
+    .taskbar-icon {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .taskbar-item span {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 320px) {
+    .taskbar-item span {
+        display: none;
+    }
+    
+    .taskbar-item {
+        padding: 8px 6px;
+        min-width: 45px;
+    }
+    
+    .taskbar {
+        padding: 6px 10px;
+        gap: 2px;
+    }
+}
+
+/* Add padding to container content to prevent overlap with fixed taskbar */
+.container {
+    padding-bottom: 70px; /* Add space at bottom to prevent content being hidden behind taskbar */
+}
+
+/* Smooth page transitions */
+body.page-transition {
+    opacity: 0.9;
+}
+
+
+
+
+
+.menu-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+            color: #333;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .menu-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Slide-out Menu */
+        .slide-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: left 0.3s ease;
+            padding: 80px 0 20px 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .slide-menu.active {
+            left: 0;
+        }
+        
+        /* Menu Items - Simple styling for plain links */
+        .slide-menu a {
+            display: block;
+            padding: 15px 25px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .slide-menu a:hover {
+            background: rgba(102, 126, 234, 0.08);
+            padding-left: 35px;
+            color: #667eea;
+        }
+        
+        .slide-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+        
+        .slide-menu a:hover::before {
+            width: 4px;
+        }
+        
+        /* Overlay for closing menu when clicked outside */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Adjust header to accommodate menu button */
+        .header {
+            position: relative;
+            padding-left: 70px; /* Make space for menu button */
+        }
+        
+        /* Mobile responsive adjustments */
+        @media (max-width: 375px) {
+            .slide-menu {
+                width: 250px;
+                left: -250px;
+            }
+            
+            .menu-btn {
+                font-size: 20px;
+                width: 35px;
+                height: 35px;
+                top: 12px;
+                left: 12px;
+            }
+            
+            .header {
+                padding-left: 60px;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 100px;
+            color: #fff;
+        }
+
+
+        .welcome-section {
+    background: #ffffff;
+    padding: 40px 20px;
+    text-align: center;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 40px;
+}
+
+.main-heading {
+    color: #1a237e;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.main-description {
+    color: #333333;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 20px;
+    margin-bottom: 60px;
+}
+
+.feature-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    color: #1a237e;
+}
+
+.feature-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.feature-title {
+    color: #1a237e;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.feature-description {
+    color: #333333;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.stats-section {
+    background: #f8f9fa;
+    padding: 50px 20px;
+    margin-bottom: 60px;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    color: #1a237e;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: #333333;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.cta-section {
+    background: #ffffff;
+    padding: 50px 20px;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cta-heading {
+    color: #1a237e;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.cta-description {
+    color: #333333;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.cta-btn.primary {
+    background: #1a237e;
+    color: white;
+}
+
+.cta-btn.primary:hover {
+    background: #303f9f;
+    transform: translateY(-2px);
+}
+
+.cta-btn.secondary {
+    background: white;
+    color: #1a237e;
+    border: 2px solid #1a237e;
+}
+
+.cta-btn.secondary:hover {
+    background: #1a237e;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-heading {
+        font-size: 2rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .cta-heading {
+        font-size: 1.5rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cta-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-section {
+        padding: 30px 15px;
+    }
+    
+    .features-grid {
+        padding: 0 15px;
+    }
+    
+    .stats-section {
+        padding: 40px 15px;
+    }
+    
+    .cta-section {
+        padding: 40px 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">JobCenter</div>
+            <button class="logout-btn" onclick="logout()">
+                <svg class="logout-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                </svg>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="taskbar">                 
+        <div class="taskbar-item" data-page="your-cv.html">                     
+            <svg class="taskbar-icon" fill="currentColor" viewBox="0 0 20 20">                         
+                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6zm2 2a1 1 0 000 2h4a1 1 0 100-2H8zm0 3a1 1 0 000 2h4a1 1 0 100-2H8zm0 3a1 1 0 000 2h2a1 1 0 100-2H8z" clip-rule="evenodd"></path>                     
+            </svg>                     
+            <span>Your CV</span>                 
+        </div>                                  
+        
+        <div class="taskbar-item" data-page="#">                     
+            <svg class="taskbar-icon" fill="currentColor" viewBox="0 0 20 20">                         
+                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"></path>                     
+            </svg>                     
+            <span>Applied Jobs</span>                 
+        </div>                                  
+        
+        <div class="taskbar-item active" data-page="./students.html">                     
+            <svg class="taskbar-icon" fill="currentColor" viewBox="0 0 20 20">                         
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>                     
+            </svg>                     
+            <span>Home</span>                 
+        </div>                                  
+        
+        <div class="taskbar-item" data-page="#">                     
+            <svg class="taskbar-icon" fill="currentColor" viewBox="0 0 20 20">                         
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>                     
+            </svg>                     
+            <span>Status</span>                 
+        </div>                                  
+        
+        <div class="taskbar-item" data-page="feed.html">                     
+            <svg class="taskbar-icon" fill="currentColor" viewBox="0 0 20 20">                         
+                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>                     
+            </svg>                     
+            <span>apply jobs</span>                 
+        </div>                               
+    </div>
+
+    <div class="main-content">
+        <button class="menu-btn" onclick="openMenu()">☰</button>
+
+        <!-- Message containers -->
+        <div id="success-message" class="message success"></div>
+        <div id="error-message" class="message error"></div>
+
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="main-heading">Welcome to JobCenter Student Portal</h1>
+            <p class="main-description">Your gateway to career success - connecting students with top employers through comprehensive placement support.</p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h2zM8 5a1 1 0 011-1h2a1 1 0 011 1v1H8V5zM4 8v6h12V8H4z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Search & Apply for Jobs</h3>
+                <p class="feature-description">Browse through thousands of job opportunities from top companies and apply with just one click.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h8V4H6zm2 2a1 1 0 000 2h4a1 1 0 100-2H8zm0 3a1 1 0 000 2h4a1 1 0 100-2H8zm0 3a1 1 0 000 2h2a1 1 0 100-2H8z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Create Professional CV</h3>
+                <p class="feature-description">Build and customize your professional resume with our easy-to-use CV builder and share it directly with employers.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Interview Rounds</h3>
+                <p class="feature-description">Participate in structured interview processes and receive feedback to improve your performance.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Placement Support</h3>
+                <p class="feature-description">Get comprehensive support throughout your placement journey with guidance from our expert team.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Direct Company Connection</h3>
+                <p class="feature-description">Connect directly with recruiters and hiring managers without intermediaries for faster placement.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Application Tracking</h3>
+                <p class="feature-description">Track all your job applications in one place and stay updated on their status throughout the process.</p>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Active Job Openings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">Partner Companies</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Placement Success Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Students Placed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <h2 class="cta-heading">Ready to Start Your Career Journey?</h2>
+            <p class="cta-description">Join thousands of students who have found their dream jobs through JobCenter.</p>
+            <div class="cta-buttons">
+                <button class="cta-btn primary" onclick="window.location.href='feed.html'">Browse Jobs</button>
+                <button class="cta-btn secondary" onclick="window.location.href='your-cv.html'">Create Your CV</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for job details -->
+    <div id="jobModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <div class="slide-menu" id="slide-menu">
+        <a href="javascript:void(0)" class="close-btn" onclick="closeMenu()">&times;</a>
+        <a href="./students.html">Home</a>
+        <a href="./hr-portal.html">Check Student Status</a>
+        <a href="./hr-portal.html">Connect with JobCenter</a>
+        <a href="./students-data.html">Students Data</a>
+        <a href="./addjobs.html">Add Jobs</a>
+        <a href="./company-profile.html">Company Profile</a>
+    </div>
+    
+    <!-- Add the overlay for closing menu when clicked outside -->
+    <div class="menu-overlay" id="menu-overlay"></div>
+</div>
+    <script>
+        // Job data with 10 professional positions
+        
+
+        // Generate job feed
+        function generateJobFeed() {
+            const jobFeed = document.getElementById('jobFeed');
+            jobFeed.innerHTML = '';
+
+            jobData.forEach(job => {
+                const jobCard = createJobCard(job);
+                jobFeed.appendChild(jobCard);
+            });
+        }
+
+        // Create individual job card
+        function createJobCard(job) {
+            const card = document.createElement('div');
+            card.className = 'job-card';
+            card.innerHTML = `
+                <div class="job-header">
+                    <div class="company-info">
+                        <div class="company-logo" style="background-color: ${job.logo}">
+                            ${job.company.charAt(0)}
+                        </div>
+                        <div class="company-details">
+                            <h3>${job.company}</h3>
+                            <div class="location">
+                                <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                </svg>
+                                ${job.location}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="job-title">${job.title}</div>
+                    <div class="job-meta">
+                        <div class="meta-item">
+                            <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h2zm4-3a1 1 0 00-1 1v1h2V4a1 1 0 00-1-1zM8 8v2H6V8h2zm0 4v2H6v-2h2zm4-4v2h-2V8h2zm0 4v2h-2v-2h2z" clip-rule="evenodd"></path>
+                            </svg>
+                            ${job.type}
+                        </div>
+                        <div class="meta-item">
+                            <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                            </svg>
+                            ${job.experience}
+                        </div>
+                        <div class="meta-item">
+                            <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            ${job.remote}
+                        </div>
+                    </div>
+                </div>
+                <div class="job-content">
+                    <div class="job-description">${job.description}</div>
+                    <div class="skills">
+                        ${job.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                    <div class="salary">${job.salary}</div>
+                </div>
+                <div class="job-actions">
+                    <button class="action-btn apply-btn" onclick="applyToJob(${job.id})">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                        </svg>
+                        Apply Now
+                    </button>
+                    <button class="action-btn read-more-btn" onclick="showJobDetails(${job.id})">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                        </svg>
+                        Read More
+                    </button>
+                </div>
+                <div class="post-time">${job.posted}</div>
+            `;
+            return card;
+        }
+
+        // Apply to job function
+        function applyToJob(jobId) {
+            const job = jobData.find(j => j.id === jobId);
+            if (job) {
+                showSuccess(`Application submitted for ${job.title} at ${job.company}!`);
+                
+                // Simulate application process
+                setTimeout(() => {
+                    showSuccess(`Your application for ${job.company} has been received. You'll hear back within 3-5 business days.`);
+                }, 1500);
+            }
+        }
+
+        // Show job details in modal
+        function showJobDetails(jobId) {
+            const job = jobData.find(j => j.id === jobId);
+            if (job) {
+                const modal = document.getElementById('jobModal');
+                const modalContent = document.getElementById('modalContent');
+                
+                modalContent.innerHTML = `
+                    <h2>${job.title}</h2>
+                    <h3 style="color: #2563eb; margin-bottom: 15px;">${job.company} • ${job.location}</h3>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Salary:</strong> <span class="salary">${job.salary}</span><br>
+                        <strong>Type:</strong> ${job.type}<br>
+                        <strong>Experience:</strong> ${job.experience}<br>
+                        <strong>Work Model:</strong> ${job.remote}
+                    </div>
+                    <h4 style="margin-bottom: 10px;">Job Description</h4>
+                    <p style="margin-bottom: 20px; line-height: 1.6;">${job.fullDescription}</p>
+                    <h4 style="margin-bottom: 10px;">Required Skills</h4>
+                    <div class="skills" style="margin-bottom: 20px;">
+                        ${job.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                    <button class="action-btn apply-btn" onclick="applyToJob(${job.id}); closeModal();" style="width: 100%;">
+                        Apply for this position
+                    </button>
+                `;
+                
+                modal.style.display = 'block';
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('jobModal').style.display = 'none';
+        }
+
+        // Modal event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('jobModal');
+            const closeBtn = document.getElementsByClassName('close')[0];
+            
+            closeBtn.onclick = closeModal;
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            };
+            
+            // Generate the job feed
+            generateJobFeed();
+        });
+
+        // Keep all the original authentication and logout functions
+        function checkAuthentication() {
+            const userType = localStorage.getItem('jobcenter_user_type');
+            const userData = localStorage.getItem('jobcenter_user_data');
+            
+            if (!userType || !userData || userType !== 'student') {
+                console.log('No valid student session found, redirecting to login');
+                window.location.replace('index.html');
+                return false;
+            }
+            
+            try {
+                const parsedUserData = JSON.parse(userData);
+                console.log('Student session valid:', parsedUserData.name);
+                return true;
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                window.location.replace('index.html');
+                return false;
+            }
+        }
+
+        function clearUserSession() {
+            try {
+                localStorage.removeItem('jobcenter_user_type');
+                localStorage.removeItem('jobcenter_user_data');
+                localStorage.removeItem('jobcenter_session_token');
+                localStorage.removeItem('jobcenter_last_login');
+                console.log('Student session cleared successfully');
+            } catch (error) {
+                console.error('Error clearing student session:', error);
+            }
+        }
+
+        function showSuccess(message) {
+            const successElement = document.getElementById('success-message');
+            if (successElement) {
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+                setTimeout(() => {
+                    successElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function hideMessages() {
+            const successElement = document.getElementById('success-message');
+            const errorElement = document.getElementById('error-message');
+            if (successElement) successElement.style.display = 'none';
+            if (errorElement) errorElement.style.display = 'none';
+        }
+
+        function forceRedirectToLogin() {
+            try {
+                console.log('Redirecting to login page...');
+                window.location.replace('index.html');
+            } catch (error) {
+                console.error('Redirect failed:', error);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            console.log('Student logout initiated');
+            
+            try {
+                // Don't hide the page - just disable the logout button
+                const logoutBtn = document.querySelector('.logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.disabled = true;
+                    logoutBtn.style.opacity = '0.6';
+                    logoutBtn.innerHTML = `
+                        <svg class="logout-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        Logging out...
+                    `;
+                }
+                
+                hideMessages();
+                clearUserSession();
+                
+                try {
+                    if (window.history && window.history.pushState) {
+                        window.history.replaceState(null, null, 'index.html');
+                        for (let i = 0; i < 10; i++) {
+                            window.history.pushState(null, null, 'index.html');
+                        }
+                        window.history.replaceState(null, null, 'index.html');
+                    }
+                } catch (historyError) {
+                    console.log('History clearing failed (non-critical):', historyError);
+                }
+                
+                try {
+                    if ('caches' in window) {
+                        caches.keys().then(names => {
+                            names.forEach(name => {
+                                caches.delete(name);
+                            });
+                        }).catch(error => {
+                            console.log('Cache clearing failed (non-critical):', error);
+                        });
+                    }
+                } catch (cacheError) {
+                    console.log('Cache API error (non-critical):', cacheError);
+                }
+                
+                try {
+                    sessionStorage.clear();
+                } catch (sessionError) {
+                    console.log('SessionStorage clearing failed (non-critical):', sessionError);
+                }
+                
+                try {
+                    for (let i = 1; i < 1000; i++) {
+                        window.clearInterval(i);
+                        window.clearTimeout(i);
+                    }
+                } catch (clearError) {
+                    console.log('Timer clearing failed (non-critical):', clearError);
+                }
+                
+                showSuccess('Logging out...');
+                
+                // Immediate redirect without delay
+                window.location.replace('index.html');
+                
+            } catch (error) {
+                console.error('Logout error:', error);
+                console.log('Performing emergency logout cleanup...');
+                
+                try {
+                    localStorage.removeItem('jobcenter_user_type');
+                    localStorage.removeItem('jobcenter_user_data');
+                    window.location.replace('index.html');
+                } catch (emergencyError) {
+                    console.error('Emergency logout failed:', emergencyError);
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+
+
+
+
+
+
+        
+// Taskbar Navigation for Multiple HTML Files
+function initializeTaskbarNavigation() {
+    const taskbarItems = document.querySelectorAll('.taskbar-item');
+    const currentPage = window.location.pathname.split('/').pop() || 'students.html';
+    
+    // Set active state based on current page
+    setActiveTaskbarItem(currentPage);
+    
+    // Add click event listeners to taskbar items
+    taskbarItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetPage = this.getAttribute('data-page');
+            
+            // Don't navigate if it's the current page or empty link
+            if (targetPage === '#' || targetPage === currentPage) {
+                return;
+            }
+            
+            // Check authentication before navigation
+            if (!checkAuthentication()) {
+                forceRedirectToLogin();
+                return;
+            }
+            
+            // Navigate to the target page
+            navigateToPage(targetPage);
+        });
+    });
+}
+
+// Function to set active taskbar item based on current page
+function setActiveTaskbarItem(currentPage) {
+    const taskbarItems = document.querySelectorAll('.taskbar-item');
+    
+    // Remove active class from all items
+    taskbarItems.forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Find and set active item based on current page
+    const pageMapping = {
+        'students.html': 'students.html',
+        'students-data.html': 'students-data.html',
+        'addjobs.html': 'addjobs.html',
+        'company-profile.html': 'company-profile.html'
+    };
+    
+    const targetPage = pageMapping[currentPage] || 'students.html';
+    const activeItem = document.querySelector(`[data-page="${targetPage}"]`);
+    
+    if (activeItem) {
+        activeItem.classList.add('active');
+    }
+}
+
+// Function to navigate to different pages
+function navigateToPage(targetPage) {
+    // Show loading state
+    showLoadingState();
+    
+    // Use window.location.href for navigation
+    window.location.href = targetPage;
+}
+
+// Function to show loading state (optional)
+function showLoadingState() {
+    const activeItem = document.querySelector('.taskbar-item.active');
+    if (activeItem) {
+        const originalContent = activeItem.innerHTML;
+        activeItem.innerHTML = `
+            <svg class="taskbar-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 2a1 1 0 011 1v.01a1 1 0 11-2 0V3a1 1 0 011-1zm0 13a1 1 0 011 1v.01a1 1 0 11-2 0V16a1 1 0 011-1zm13-13a1 1 0 011 1v.01a1 1 0 11-2 0V3a1 1 0 011-1zm0 13a1 1 0 011 1v.01a1 1 0 11-2 0V16a1 1 0 011-1zm-8-9a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1zm0 4a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1zm0 4a1 1 0 011-1h4a1 1 0 110 2h-4a1 1 0 01-1-1z"></path>
+            </svg>
+            <span>Loading...</span>
+        `;
+        
+        // Reset after a short delay if navigation fails
+        setTimeout(() => {
+            activeItem.innerHTML = originalContent;
+        }, 3000);
+    }
+}
+
+// Function to get current page filename
+function getCurrentPageName() {
+    return window.location.pathname.split('/').pop() || 'students.html';
+}
+
+// Add this to your existing DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    // Your existing authentication and initialization code...
+    console.log('Student portal initializing...');
+    
+    // First check authentication
+    if (!checkAuthentication()) {
+        return; // Will redirect to login
+    }
+    
+    // Initialize taskbar navigation
+    initializeTaskbarNavigation();
+    
+    // Your existing code continues...
+    updateWelcomeMessage();
+    
+    const jobForm = document.getElementById('job-posting-form');
+    if (jobForm) {
+        jobForm.addEventListener('submit', handleJobPostingSubmit);
+    }
+    
+    setMinimumDates();
+    preventBackNavigation();
+    handleVisibilityChange();
+    hideMessages();
+    
+    // Session check interval
+    setInterval(() => {
+        if (!checkAuthentication()) {
+            console.log('Session expired, redirecting to login');
+            forceRedirectToLogin();
+        }
+    }, 30000);
+    
+    console.log('Student portal initialized successfully');
+});
+
+// Optional: Add hover effects for better UX
+document.addEventListener('DOMContentLoaded', function() {
+    const taskbarItems = document.querySelectorAll('.taskbar-item');
+    
+    taskbarItems.forEach(item => {
+        // Add hover effect
+        item.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(-2px)';
+            }
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(0)';
+            }
+        });
+    });
+});
+
+
+
+const slideMenu = document.getElementById('slide-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const menuLinks = document.querySelectorAll('.slide-menu a');
+        
+        // Open menu function
+        function openMenu() {
+            slideMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+        }
+        
+        // Close menu function
+        function closeMenu() {
+            slideMenu.classList.remove('active'); 
+            menuOverlay.classList.remove('active');
+        }
+        
+        // Event listeners
+        menuOverlay.addEventListener('click', closeMenu);
+        
+        // Close menu when any menu link is clicked
+        menuLinks.forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+        
+        // Close menu when clicking outside (additional safety)
+        document.addEventListener('click', function(event) {
+            const isClickInsideMenu = slideMenu.contains(event.target);
+            const isClickOnMenuBtn = event.target.classList.contains('menu-btn');
+            
+            if (!isClickInsideMenu && !isClickOnMenuBtn && slideMenu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+        
+        // Prevent menu from closing when clicking inside the menu
+        slideMenu.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+
+
+
+
+
+
+
+
+
+
+        function getCurrentUser() {
+            try {
+                const userData = localStorage.getItem('jobcenter_user_data');
+                if (userData) {
+                    return JSON.parse(userData);
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting current user:', error);
+                return null;
+            }
+        }
+
+        function preventBackNavigation() {
+            history.pushState(null, null, window.location.href);
+            
+            window.addEventListener('popstate', function(event) {
+                const userType = localStorage.getItem('jobcenter_user_type');
+                const userData = localStorage.getItem('jobcenter_user_data');
+                
+                if (!userType || !userData || userType !== 'student') {
+                    history.pushState(null, null, window.location.href);
+                    forceRedirectToLogin();
+                }
+            });
+        }
+
+        function handleVisibilityChange() {
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    if (!checkAuthentication()) {
+                        forceRedirectToLogin();
+                    }
+                }
+            });
+        }
+
+        // Initialize page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Job portal initializing...');
+            
+            if (!checkAuthentication()) {
+                return;
+            }
+            
+            preventBackNavigation();
+            handleVisibilityChange();
+            hideMessages();
+            
+            setInterval(() => {
+                if (!checkAuthentication()) {
+                    console.log('Session expired, redirecting to login');
+                    forceRedirectToLogin();
+                }
+            }, 30000);
+            
+            console.log('Job portal initialized successfully');
+        });
+
+        window.addEventListener('load', function() {
+            if (!checkAuthentication()) {
+                forceRedirectToLogin();
+            }
+        });
+
+        window.addEventListener('storage', function(event) {
+            if (event.key === 'jobcenter_user_type' || event.key === 'jobcenter_user_data') {
+                if (!event.newValue) {
+                    console.log('Session cleared in another tab, redirecting to login');
+                    forceRedirectToLogin();
+                }
+            }
+        });
+
+        window.addEventListener('focus', function() {
+            if (!checkAuthentication()) {
+                console.log('Invalid session detected on focus, redirecting to login');
+                forceRedirectToLogin();
+            }
+        });
+
+        window.logout = logout;
+        window.jobCenterLogout = logout;
+    </script>
+</body>
+</html>
