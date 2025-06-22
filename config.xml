@@ -1,92 +1,51 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.youbuddy.continental" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>YouBuddy Chatbot</name>
-    <description>YouBuddy Chatbot</description>
-    <author email="youbuddy.yahya@gmail.com">Yahya</author>
+<widget id="com.continental.jobcenter" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>JobCenter</name>
+    <description>
+        Professional Job Portal - Connect Talent with Opportunity. A comprehensive platform for students to find jobs and HR professionals to discover talent.
+    </description>
+    <author email="support@jobcenter.com" href="https://jobcenter.com">
+        JobCenter Team
+    </author>
     <content src="index.html" />
     
-    <!-- Navigation and Intent Permissions -->
-    <allow-navigation href="*" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
-    <allow-intent href="tel:*" />
-    <allow-intent href="sms:*" />
-    <allow-intent href="mailto:*" />
-    <allow-intent href="geo:*" />
-    
-    <!-- Preferences -->
-    <engine name="android" spec="12.0.1" />
-    <preference name="AllowInlineMediaPlayback" value="true" />
-    <preference name="android-targetSdkVersion" value="33" />
-    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
-    <!-- InAppBrowser Configuration -->
-<preference name="InAppBrowserStorageEnabled" value="true" />
-<preference name="SuppressesIncrementalRendering" value="false" />
-
-<!-- Status Bar Configuration -->
-<preference name="StatusBarOverlaysWebView" value="false" />
-<preference name="StatusBarBackgroundColor" value="#4285F4" />
-<preference name="StatusBarStyle" value="lightcontent" />
-
-<!-- Splash Screen Configuration -->
-<preference name="SplashScreenDelay" value="2000" />
-<preference name="AutoHideSplashScreen" value="true" />
-<preference name="SplashScreenBackgroundColor" value="0xffffffff" />
-
-<!-- For opening external apps -->
-<allow-intent href="market:*" />
-<allow-intent href="intent:*" />
-
-<!-- Additional permissions for Android -->
-<platform name="android">
-    <!-- Your existing permissions -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-</platform>
-    
-    
-    <!-- Global Access -->
+    <!-- Navigation & Access -->
     <access origin="*" />
-    
-    <!-- Platform Specific Configuration -->
+    <allow-navigation href="*" />
+    <allow-intent href="*" />
+
+    <!-- Preferences -->
+    <preference name="AllowInlineMediaPlayback" value="true" />
+    <preference name="android-minSdkVersion" value="21" />
+    <preference name="android-targetSdkVersion" value="33" />
+
+    <engine name="android" spec="12.0.1" />
+
+    <!-- Plugins -->
+    <plugin name="cordova-plugin-inappbrowser" source="npm" />
+    <plugin name="cordova-plugin-file" spec="^8.0.0" />
+    <plugin name="cordova-plugin-media-capture" />
+    <plugin name="cordova-plugin-media" source="npm" />
+
+    <!-- Platform-specific permissions -->
     <platform name="android">
         <uses-permission android:name="android.permission.RECORD_AUDIO" />
         <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.CAMERA" />
-        <uses-permission android:name="android.permission.CAMERA" />
-<uses-feature android:name="android.hardware.camera" />
-<uses-feature android:name="android.hardware.camera.autofocus" />
-        
-        
-        
-        <!-- Target Android API level 33 (Android 13) -->
-        <config-file target="AndroidManifest.xml" parent="/*">
-            <uses-permission android:name="android.permission.CAMERA" />
-        </config-file>
     </platform>
-    
-    <!-- Plugins Configuration -->
-<plugin name="cordova-plugin-file" spec="^8.0.0" />
 
-<!-- <plugin name="cordova-plugin-android-permissions" spec="^1.1.2" /> -->
-<plugin name="cordova-plugin-media-capture" />
+    <!-- Optional app icon -->
+    <icon src="jobcenter.jpg" />
 
-<plugin name="cordova-plugin-media" source="npm" />
+    <!-- Optional splash screen -->
+    <!-- <splash src="youbuddysplash.jpg" /> -->
 
-
-
-    
-    <plugin name="cordova-plugin-camera" spec="6.0.0" />
-    <plugin name="cordova-plugin-inappbrowser" source="npm" spec="5.0.0" />
-    <!-- Other plugins -->
-    
-    
-    
-    
-    <!-- App Resources -->
-    <icon src="youbuddylogo (2) (1) (1).jpg" />
-    <splash src="youbuddysplash.jpg" />
+    <!-- Specific domain access -->
+    <access origin="https://youtube.com/*" />
+    <access origin="https://www.instagram.com/*" />
+    <access origin="https://www.geeksforgeeks.org/*" />
+    <access origin="whatsapp:*" launch-external="yes" />
+    <access origin="https://google.com/*" />
+    <access origin="https://drive.google.com/*" />
 </widget>
