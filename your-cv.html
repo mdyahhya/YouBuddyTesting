@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced CV Builder</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            line-height: 1.4;
+        }
+
+        .container {
+            width: 100vw;
+            max-width: 375px;
+            height: 100vh;
+            max-height: 770px;
+            margin: 0 auto;
+            background: white;
+            backdrop-filter: none;
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+            border-radius: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .header p {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .content {
+            flex: 1;
+            padding: 0;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #2c3e50; 
+            border-bottom: 2px solid #3498db;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 15px 0 10px 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: border-color 0.2s;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .form-row.three-col {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .dynamic-section {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            position: relative;
+        }
+
+        .add-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .add-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .remove-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            float: right;
+            transition: all 0.3s ease;
+        }
+
+        .remove-button:hover {
+            background: #c82333;
+        }
+
+        .save-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .save-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* CV Preview Styles */
+        .cv-preview {
+            background: white;
+            padding: 0;
+        }
+
+        .a4-page {
+            width: 100%;
+            min-height: 600px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 10px auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cv-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2c3e50;
+        }
+
+        .cv-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .cv-contact {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 10px;
+            color: #495057;
+        }
+
+        .cv-contact span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cv-section {
+            margin-bottom: 15px;
+        }
+
+        .cv-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cv-item {
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 2px solid #e9ecef;
+        }
+
+        .cv-item-header {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+
+        .cv-item-subheader {
+            color: #6c757d;
+            font-size: 10px;
+            font-style: italic;
+            margin-bottom: 3px;
+        }
+
+        .cv-item-description {
+            color: #495057;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .skill-category {
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .skill-category-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+
+        .skill-tag {
+            background: #2c3e50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 8px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 375px) {
+            .cv-name {
+                font-size: 18px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cv-contact {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .form-row,
+            .form-row.three-col {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-briefcase"></i> JobCenter - Create Your CV</h1>
+            <p>You can edit it anytime</p>
+        </div>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab" onclick="switchTab('edit')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="tab active" onclick="switchTab('preview')">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+            </div>
+            
+            
+
+            <!-- Form Section -->
+            <div class="tab-content" id="editTab">
+                <div class="form-section">
+                    <div class="form-header">
+                        <p>Create your professional CV with ease</p>
+                    </div>
+
+                    <form id="cvForm">
+                        <!-- Personal Information -->
+                        <div class="section-header">
+                            <i class="fas fa-user"></i> Personal Information
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea id="address" name="address" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="linkedin">LinkedIn URL</label>
+                                <input type="url" id="linkedin" name="linkedin">
+                            </div>
+                            <div class="form-group">
+                                <label for="github">GitHub URL</label>
+                                <input type="url" id="github" name="github">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="portfolio">Portfolio URL</label>
+                            <input type="url" id="portfolio" name="portfolio">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="summary">Professional Summary</label>
+                            <textarea id="summary" name="summary" rows="4" placeholder="Brief description of your professional background and career objectives"></textarea>
+                        </div>
+
+                        <!-- Education Section -->
+                        <div class="section-header">
+                            <i class="fas fa-graduation-cap"></i> Education
+                        </div>
+                        <div id="educationContainer">
+                            <div class="dynamic-section education-item">
+                                <button type="button" class="remove-button" onclick="removeEducation(this)">Remove</button>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Degree *</label>
+                                        <input type="text" name="degree" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Field of Study</label>
+                                        <input type="text" name="field">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Institution Name *</label>
+                                    <input type="text" name="institution" required>
+                                </div>
+                                <div class="form-row three-col">
+                                    <div class="form-group">
+                                        <label>Location</label>
+                                        <input type="text" name="location">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Start Year</label>
+                                        <input type="number" name="startYear" min="1950" max="2030">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>End Year</label>
+                                        <input type="number" name="endYear" min="1950" max="2030">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>CGPA/Percentage</label>
+                                    <input type="text" name="cgpa">
+                                </div>
+                                <div class="form-group">
+                                    <label>Achievements</label>
+                                    <textarea name="achievements" rows="2" placeholder="Academic achievements, honors, etc."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-button" onclick="addEducation()">
+                            <i class="fas fa-plus"></i> Add Education
+                        </button>
+
+                        <!-- Experience Section -->
+                        <div class="section-header">
+                            <i class="fas fa-briefcase"></i> Experience
+                        </div>
+                        <div id="experienceContainer">
+                            <div class="dynamic-section experience-item">
+                                <button type="button" class="remove-button" onclick="removeExperience(this)">Remove</button>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Job Title *</label>
+                                        <input type="text" name="title" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Company *</label>
+                                        <input type="text" name="company" required>
+                                    </div>
+                                </div>
+                                <div class="form-row three-col">
+                                    <div class="form-group">
+                                        <label>Location</label>
+                                        <input type="text" name="location">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <input type="month" name="startDate">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        <input type="month" name="endDate">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="isCurrent"> Currently working here
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Job Description</label>
+                                    <textarea name="description" rows="3" placeholder="Describe your role and responsibilities"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Key Achievements</label>
+                                    <textarea name="achievements" rows="2" placeholder="Notable achievements in this role"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-button" onclick="addExperience()">
+                            <i class="fas fa-plus"></i> Add Experience
+                        </button>
+
+                        <!-- Skills Section -->
+                        <div class="section-header">
+                            <i class="fas fa-cogs"></i> Skills
+                        </div>
+                        <div id="skillsContainer">
+                            <div class="dynamic-section skills-item">
+                                <button type="button" class="remove-button" onclick="removeSkill(this)">Remove</button>
+                                <div class="form-group">
+                                    <label>Skill Category *</label>
+                                    <input type="text" name="category" placeholder="e.g., Programming Languages, Web Technologies" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Skills (comma-separated) *</label>
+                                    <input type="text" name="skills" placeholder="e.g., JavaScript, Python, React, Node.js" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-button" onclick="addSkill()">
+                            <i class="fas fa-plus"></i> Add Skill Category
+                        </button>
+
+                        <!-- Certificates Section -->
+                        <div class="section-header">
+                            <i class="fas fa-certificate"></i> Certificates
+                        </div>
+                        <div id="certificatesContainer">
+                            <div class="dynamic-section certificate-item">
+                                <button type="button" class="remove-button" onclick="removeCertificate(this)">Remove</button>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Certificate Name *</label>
+                                        <input type="text" name="name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Issuing Organization</label>
+                                        <input type="text" name="issuer">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Issue Date</label>
+                                        <input type="month" name="issueDate">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Expiry Date</label>
+                                        <input type="month" name="expiryDate">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Credential ID</label>
+                                        <input type="text" name="credentialId">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Certificate URL</label>
+                                        <input type="url" name="url">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-button" onclick="addCertificate()">
+                            <i class="fas fa-plus"></i> Add Certificate
+                        </button>
+
+                        <!-- Projects Section -->
+                        <div class="section-header">
+                            <i class="fas fa-project-diagram"></i> Projects
+                        </div>
+                        <div id="projectsContainer">
+                            <div class="dynamic-section project-item">
+                                <button type="button" class="remove-button" onclick="removeProject(this)">Remove</button>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Project Name *</label>
+                                        <input type="text" name="name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Technologies Used</label>
+                                        <input type="text" name="technologies" placeholder="e.g., React, Node.js, MongoDB">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Project Description</label>
+                                    <textarea name="description" rows="3" placeholder="Describe the project and your role"></textarea>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Project URL</label>
+                                        <input type="url" name="url">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>GitHub Repository</label>
+                                        <input type="url" name="github">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-button" onclick="addProject()">
+                            <i class="fas fa-plus"></i> Add Project
+                        </button>
+
+                        <button type="submit" class="save-button" id="saveButton">
+                            <i class="fas fa-save"></i> Save CV
+                        </button>
+                    </form>
+
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Saving your CV...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CV Preview Section -->
+            <div class="tab-content active" id="previewTab">
+                <div class="cv-preview">
+                    <div class="a4-page" id="cvPreview">
+                        <div class="cv-header">
+                            <div class="cv-name" id="previewName">Your Name</div>
+                            <div class="cv-contact" id="previewContact">
+                                <span><i class="fas fa-envelope"></i> email@example.com</span>
+                                <span><i class="fas fa-phone"></i> +1234567890</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Your Address</span>
+                            </div>
+                        </div>
+
+                        <div id="previewSummary" class="cv-section" style="display: none;">
+                            <div class="cv-section-title">Professional Summary</div>
+                            <div class="cv-item-description" id="summaryText"></div>
+                        </div>
+
+                        <div id="previewEducation" class="cv-section">
+                            <div class="cv-section-title">Education</div>
+                            <div id="educationList"></div>
+                        </div>
+
+                        <div id="previewExperience" class="cv-section">
+                            <div class="cv-section-title">Experience</div>
+                            <div id="experienceList"></div>
+                        </div>
+
+                        <div id="previewSkills" class="cv-section">
+                            <div class="cv-section-title">Skills</div>
+                            <div class="skills-grid" id="skillsList"></div>
+                        </div>
+
+                        <div id="previewCertificates" class="cv-section">
+                            <div class="cv-section-title">Certificates</div>
+                            <div id="certificatesList"></div>
+                        </div>
+
+                        <div id="previewProjects" class="cv-section">
+                            <div class="cv-section-title">Projects</div>
+                            <div id="projectsList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Your database credentials
+        const SUPABASE_URL = 'https://hyrdvlqgtkxtabpamdmc.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cmR2bHFndGt4dGFicGFtZG1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwMDM0NjYsImV4cCI6MjA2MzU3OTQ2Nn0.UVO41KHOPQATqNJy5VnHaEaeGER3vXp0pqYqwigt5rE';
+
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Get current user's email from login session
+        let currentUserEmail = null;
+        let currentUserId = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserSession();
+            setupFormListeners();
+            loadExistingCV();
+        });
+
+        // Load user session
+        // Load user session
+async function loadUserSession() {
+    const userType = localStorage.getItem('jobcenter_user_type');
+    const userData = localStorage.getItem('jobcenter_user_data');
+    
+    if (userType === 'student' && userData) {
+        const parsedUserData = JSON.parse(userData);
+        currentUserEmail = parsedUserData.email;
+        currentUserId = parsedUserData.id || parsedUserData.student_id;
+        
+        document.getElementById('email').value = currentUserEmail;
+        document.getElementById('email').readOnly = true;
+    } else {
+        showNotification('Please log in as a student to access CV builder', 'error');
+        // Optionally redirect to login page
+        // window.location.href = '/login.html';
+    }
+}
+
+// Get current user data (similar to your sample function)
+function getCurrentUser() {
+    const userType = localStorage.getItem('jobcenter_user_type');
+    const userData = localStorage.getItem('jobcenter_user_data');
+    return {
+        userType: userType,
+        userData: userData ? JSON.parse(userData) : null
+    };
+}
+
+        // Setup form listeners for real-time preview
+        // Setup form listeners for real-time preview
+// Setup form listeners for real-time preview - Modified to not update preview initially
+function setupFormListeners() {
+    const form = document.getElementById('cvForm');
+    
+    // Add both preview update and localStorage save
+    form.addEventListener('input', function() {
+        updatePreview();
+        saveToLocalStorage(); // Auto-save to localStorage
+    });
+    
+    form.addEventListener('submit', handleSubmit);
+    
+    // Don't call updatePreview() here since data is already loaded
+}
+
+        // Handle form submission
+        // Handle form submission
+async function handleSubmit(e) {
+    e.preventDefault();
+    
+    const currentUser = getCurrentUser();
+    if (!currentUser.userType || currentUser.userType !== 'student' || !currentUser.userData) {
+        showNotification('Please log in as a student to save your CV', 'error');
+        return;
+    }
+
+    const saveButton = document.getElementById('saveButton');
+    const loading = document.getElementById('loading');
+    
+    saveButton.disabled = true;
+    loading.style.display = 'block';
+
+    try {
+        const cvData = collectFormData();
+        
+        // Save to Supabase
+        await saveToSupabase(cvData);
+        
+        // Also save to localStorage as backup
+        saveToLocalStorage();
+        
+        showNotification('CV saved successfully!', 'success');
+        
+        // Switch to preview tab after successful save
+        switchTab('preview');
+        
+    } catch (error) {
+        console.error('Error saving CV:', error);
+        
+        // Even if Supabase fails, save to localStorage
+        saveToLocalStorage();
+        showNotification('Saved locally. Will sync when connection is restored.', 'warning');
+        
+    } finally {
+        saveButton.disabled = false;
+        loading.style.display = 'none';
+    }
+}
+
+
+
+
+        // Collect all form data
+        function collectFormData() {
+            const formData = new FormData(document.getElementById('cvForm'));
+            
+            const data = {
+                user_email: currentUserEmail,
+                student_id: currentUserId,
+                full_name: formData.get('fullName'),
+                phone: formData.get('phone'),
+                email: formData.get('email'),
+                address: formData.get('address'),
+                linkedin_url: formData.get('linkedin'),
+                github_url: formData.get('github'),
+                portfolio_url: formData.get('portfolio'),
+                professional_summary: formData.get('summary'),
+                education: collectEducationData(),
+                experience: collectExperienceData(),
+                skills: collectSkillsData(),
+                certificates: collectCertificatesData(),
+                projects: collectProjectsData()
+            };
+
+            return data;
+        }
+
+        // Collect education data
+        function collectEducationData() {
+            const educationItems = document.querySelectorAll('.education-item');
+            const education = [];
+
+            educationItems.forEach(item => {
+                const degree = item.querySelector('[name="degree"]').value;
+                if (degree.trim()) {
+                    education.push({
+                        degree: degree,
+                        field: item.querySelector('[name="field"]').value,
+                        institution: item.querySelector('[name="institution"]').value,
+                        location: item.querySelector('[name="location"]').value,
+                        start_year: item.querySelector('[name="startYear"]').value,
+                        end_year: item.querySelector('[name="endYear"]').value,
+                        cgpa: item.querySelector('[name="cgpa"]').value,
+                        achievements: item.querySelector('[name="achievements"]').value.split('\n').filter(a => a.trim())
+                    });
+                }
+            });
+
+            return education;
+        }
+
+        // Collect experience data
+        function collectExperienceData() {
+            const experienceItems = document.querySelectorAll('.experience-item');
+            const experience = [];
+
+            experienceItems.forEach(item => {
+                const title = item.querySelector('[name="title"]').value;
+                if (title.trim()) {
+                    experience.push({
+                        title: title,
+                        company: item.querySelector('[name="company"]').value,
+                        location: item.querySelector('[name="location"]').value,
+                        start_date: item.querySelector('[name="startDate"]').value,
+                        end_date: item.querySelector('[name="endDate"]').value,
+                        is_current: item.querySelector('[name="isCurrent"]').checked,
+                        description: item.querySelector('[name="description"]').value,
+                        achievements: item.querySelector('[name="achievements"]').value.split('\n').filter(a => a.trim())
+                    });
+                }
+            });
+
+            return experience;
+        }
+
+        // Collect skills data
+        function collectSkillsData() {
+            const skillItems = document.querySelectorAll('.skills-item');
+            const skills = [];
+
+            skillItems.forEach(item => {
+                const category = item.querySelector('[name="category"]').value;
+                const skillsList = item.querySelector('[name="skills"]').value;
+                if (category.trim() && skillsList.trim()) {
+                    skills.push({
+                        category: category,
+                        skills: skillsList.split(',').map(s => s.trim()).filter(s => s)
+                    });
+                }
+            });
+
+            return skills;
+        }
+
+        // Collect certificates data
+        function collectCertificatesData() {
+            const certificateItems = document.querySelectorAll('.certificate-item');
+            const certificates = [];
+
+            certificateItems.forEach(item => {
+                const name = item.querySelector('[name="name"]').value;
+                if (name.trim()) {
+                    certificates.push({
+                        name: name,
+                        issuer: item.querySelector('[name="issuer"]').value,
+                        issue_date: item.querySelector('[name="issueDate"]').value,
+                        expiry_date: item.querySelector('[name="expiryDate"]').value,
+                        credential_id: item.querySelector('[name="credentialId"]').value,
+                        url: item.querySelector('[name="url"]').value
+                    });
+                }
+            });
+
+            return certificates;
+        }
+
+        // Collect projects data
+        function collectProjectsData() {
+            const projectItems = document.querySelectorAll('.project-item');
+            const projects = [];
+
+            projectItems.forEach(item => {
+                const name = item.querySelector('[name="name"]').value;
+                if (name.trim()) {
+                    projects.push({
+                        name: name,
+                        technologies: item.querySelector('[name="technologies"]').value,
+                        description: item.querySelector('[name="description"]').value,
+                        url: item.querySelector('[name="url"]').value,
+                        github: item.querySelector('[name="github"]').value
+                    });
+                }
+            });
+
+            return projects;
+        }
+
+        // Save data to Supabase
+        async function saveToSupabase(cvData) {
+            // Check if CV already exists for this user
+            const { data: existingCV, error: fetchError } = await supabase
+                .from('cv_profiles')
+                .select('id')
+                .eq('user_email', currentUserEmail)
+                .single();
+
+            if (existingCV) {
+                // Update existing CV
+                const { error } = await supabase
+                    .from('cv_profiles')
+                    .update(cvData)
+                    .eq('user_email', currentUserEmail);
+
+                if (error) throw error;
+            } else {
+                // Insert new CV
+                const { error } = await supabase
+                    .from('cv_profiles')
+                    .insert([cvData]);
+
+                if (error) throw error;
+            }
+        }
+
+        // Load existing CV data
+        // Load existing CV data
+// Load existing CV data with localStorage fallback
+// Load existing CV data with instant loading from localStorage
+async function loadExistingCV() {
+    if (!currentUserEmail) return;
+
+    try {
+        // First, try to load from localStorage for instant display
+        const localData = loadFromLocalStorage();
+        if (localData) {
+            populateForm(localData);
+            updatePreview();
+            console.log('Loaded from localStorage instantly');
+        }
+
+        // Then try to load from Supabase (this might be newer data)
+        const { data, error } = await supabase
+            .from('cv_profiles')
+            .select('*')
+            .eq('user_email', currentUserEmail)
+            .single();
+
+        if (error && error.code !== 'PGRST116') {
+            throw error;
+        }
+
+        if (data) {
+            // Check if Supabase data is different from localStorage
+            const localDataString = JSON.stringify(localData);
+            const supabaseDataString = JSON.stringify(data);
+            
+            if (localDataString !== supabaseDataString) {
+                // Supabase has different/newer data
+                populateForm(data);
+                updatePreview();
+                
+                // Update localStorage with the latest data
+                saveToLocalStorage();
+                console.log('Updated with newer data from Supabase');
+            }
+        } else if (!localData) {
+            // No data in either place, show empty form
+            console.log('No existing CV data found');
+        }
+        
+    } catch (error) {
+        console.error('Error loading CV from Supabase:', error);
+        
+        // If Supabase fails but we have localStorage data, that's fine
+        if (!loadFromLocalStorage()) {
+            showNotification('Could not load CV data', 'error');
+        }
+    }
+}
+
+        // Populate form with existing data
+        // Enhanced populateForm function that doesn't show default values first
+function populateForm(data) {
+    // Disable form listeners temporarily to prevent unnecessary updates
+    const form = document.getElementById('cvForm');
+    const originalHandler = form.oninput;
+    form.oninput = null;
+    
+    try {
+        // Personal information
+        document.getElementById('fullName').value = data.full_name || '';
+        document.getElementById('phone').value = data.phone || '';
+        document.getElementById('email').value = data.email || '';
+        document.getElementById('address').value = data.address || '';
+        document.getElementById('linkedin').value = data.linkedin_url || '';
+        document.getElementById('github').value = data.github_url || '';
+        document.getElementById('portfolio').value = data.portfolio_url || '';
+        document.getElementById('summary').value = data.professional_summary || '';
+
+        // Populate dynamic sections
+        if (data.education && data.education.length > 0) {
+            populateEducation(data.education);
+        }
+
+        if (data.experience && data.experience.length > 0) {
+            populateExperience(data.experience);
+        }
+
+        if (data.skills && data.skills.length > 0) {
+            populateSkills(data.skills);
+        }
+
+        if (data.certificates && data.certificates.length > 0) {
+            populateCertificates(data.certificates);
+        }
+
+        if (data.projects && data.projects.length > 0) {
+            populateProjects(data.projects);
+        }
+        
+    } finally {
+        // Re-enable form listeners
+        setTimeout(() => {
+            setupFormListeners();
+        }, 100);
+    }
+}
+
+        // Populate education section
+        // Populate education section - Fixed version
+function populateEducation(educationData) {
+    const container = document.getElementById('educationContainer');
+    if (!container) return;
+    
+    // Don't clear the container completely, instead remove extra items
+    const existingItems = container.querySelectorAll('.education-item');
+    
+    // Remove extra items if we have more than needed
+    for (let i = educationData.length; i < existingItems.length; i++) {
+        existingItems[i].remove();
+    }
+    
+    // Add more items if needed
+    while (container.children.length < educationData.length) {
+        addEducation();
+    }
+    
+    // Now populate the data
+    educationData.forEach((edu, index) => {
+        const item = container.children[index];
+        if (!item) return;
+        
+        item.querySelector('[name="degree"]').value = edu.degree || '';
+        item.querySelector('[name="field"]').value = edu.field || '';
+        item.querySelector('[name="institution"]').value = edu.institution || '';
+        item.querySelector('[name="location"]').value = edu.location || '';
+        item.querySelector('[name="startYear"]').value = edu.start_year || '';
+        item.querySelector('[name="endYear"]').value = edu.end_year || '';
+        item.querySelector('[name="cgpa"]').value = edu.cgpa || '';
+        item.querySelector('[name="achievements"]').value = Array.isArray(edu.achievements) ? edu.achievements.join('\n') : edu.achievements || '';
+    });
+}
+
+        // Populate experience section
+        // Populate experience section - Fixed version
+function populateExperience(experienceData) {
+    const container = document.getElementById('experienceContainer');
+    if (!container) return;
+    
+    const existingItems = container.querySelectorAll('.experience-item');
+    
+    for (let i = experienceData.length; i < existingItems.length; i++) {
+        existingItems[i].remove();
+    }
+    
+    while (container.children.length < experienceData.length) {
+        addExperience();
+    }
+
+    experienceData.forEach((exp, index) => {
+        const item = container.children[index];
+        if (!item) return;
+        
+        item.querySelector('[name="title"]').value = exp.title || '';
+        item.querySelector('[name="company"]').value = exp.company || '';
+        item.querySelector('[name="location"]').value = exp.location || '';
+        item.querySelector('[name="startDate"]').value = exp.start_date || '';
+        item.querySelector('[name="endDate"]').value = exp.end_date || '';
+        item.querySelector('[name="isCurrent"]').checked = exp.is_current || false;
+        item.querySelector('[name="description"]').value = exp.description || '';
+        item.querySelector('[name="achievements"]').value = Array.isArray(exp.achievements) ? exp.achievements.join('\n') : exp.achievements || '';
+    });
+}
+
+// Populate skills section - Fixed version
+function populateSkills(skillsData) {
+    const container = document.getElementById('skillsContainer');
+    if (!container) return;
+    
+    const existingItems = container.querySelectorAll('.skills-item');
+    
+    for (let i = skillsData.length; i < existingItems.length; i++) {
+        existingItems[i].remove();
+    }
+    
+    while (container.children.length < skillsData.length) {
+        addSkill();
+    }
+
+    skillsData.forEach((skillCategory, index) => {
+        const item = container.children[index];
+        if (!item) return;
+        
+        item.querySelector('[name="category"]').value = skillCategory.category || '';
+        item.querySelector('[name="skills"]').value = Array.isArray(skillCategory.skills) ? skillCategory.skills.join(', ') : skillCategory.skills || '';
+    });
+}
+
+// Apply similar fixes to populateCertificates and populateProjects functions
+
+        // Populate certificates section
+        // Populate certificates section - Fixed version
+function populateCertificates(certificatesData) {
+    const container = document.getElementById('certificatesContainer');
+    if (!container) return;
+    
+    const existingItems = container.querySelectorAll('.certificate-item');
+    
+    // Remove extra items if we have more than needed
+    for (let i = certificatesData.length; i < existingItems.length; i++) {
+        existingItems[i].remove();
+    }
+    
+    // Add more items if needed
+    while (container.children.length < certificatesData.length) {
+        addCertificate();
+    }
+
+    // Now populate the data
+    certificatesData.forEach((cert, index) => {
+        const item = container.children[index];
+        if (!item) return;
+        
+        item.querySelector('[name="name"]').value = cert.name || '';
+        item.querySelector('[name="issuer"]').value = cert.issuer || '';
+        item.querySelector('[name="issueDate"]').value = cert.issue_date || '';
+        item.querySelector('[name="expiryDate"]').value = cert.expiry_date || '';
+        item.querySelector('[name="credentialId"]').value = cert.credential_id || '';
+        item.querySelector('[name="url"]').value = cert.url || '';
+    });
+}
+
+        // Populate projects section
+        // Populate projects section - Fixed version
+function populateProjects(projectsData) {
+    const container = document.getElementById('projectsContainer');
+    if (!container) return;
+    
+    const existingItems = container.querySelectorAll('.project-item');
+    
+    // Remove extra items if we have more than needed
+    for (let i = projectsData.length; i < existingItems.length; i++) {
+        existingItems[i].remove();
+    }
+    
+    // Add more items if needed
+    while (container.children.length < projectsData.length) {
+        addProject();
+    }
+
+    // Now populate the data
+    projectsData.forEach((project, index) => {
+        const item = container.children[index];
+        if (!item) return;
+        
+        item.querySelector('[name="name"]').value = project.name || '';
+        item.querySelector('[name="technologies"]').value = project.technologies || '';
+        item.querySelector('[name="description"]').value = project.description || '';
+        item.querySelector('[name="url"]').value = project.url || '';
+        item.querySelector('[name="github"]').value = project.github || '';
+    });
+}
+
+        // Update CV preview in real-time
+        function updatePreview() {
+            updatePersonalInfo();
+            updateEducationPreview();
+            updateExperiencePreview();
+            updateSkillsPreview();
+            updateCertificatesPreview();
+            updateProjectsPreview();
+            updateSummaryPreview();
+        }
+
+        // Update personal information preview
+        // Update personal information preview
+function updatePersonalInfo() {
+    const name = document.getElementById('fullName').value || 'Your Name';
+    const email = document.getElementById('email').value || '';
+    const phone = document.getElementById('phone').value || '';
+    const address = document.getElementById('address').value || '';
+
+    document.getElementById('previewName').textContent = name;
+    
+    let contactHtml = '';
+    if (email) contactHtml += `<div class="contact-item">${email}</div>`;
+    if (phone) contactHtml += `<div class="contact-item">${phone}</div>`;
+    if (address) contactHtml += `<div class="contact-item">${address}</div>`;
+    
+    document.getElementById('previewContact').innerHTML = contactHtml;
+}
+
+        // Update summary preview
+        function updateSummaryPreview() {
+            const summary = document.getElementById('summary').value;
+            const summarySection = document.getElementById('previewSummary');
+            
+            if (summary.trim()) {
+                document.getElementById('summaryText').textContent = summary;
+                summarySection.style.display = 'block';
+            } else {
+                summarySection.style.display = 'none';
+            }
+        }
+
+        // Update education preview
+        function updateEducationPreview() {
+            const educationItems = document.querySelectorAll('.education-item');
+            const educationList = document.getElementById('educationList');
+            
+            let html = '';
+            educationItems.forEach(item => {
+                const degree = item.querySelector('[name="degree"]').value;
+                const field = item.querySelector('[name="field"]').value;
+                const institution = item.querySelector('[name="institution"]').value;
+                const location = item.querySelector('[name="location"]').value;
+                const startYear = item.querySelector('[name="startYear"]').value;
+                const endYear = item.querySelector('[name="endYear"]').value;
+                const cgpa = item.querySelector('[name="cgpa"]').value;
+                const achievements = item.querySelector('[name="achievements"]').value;
+
+                if (degree.trim()) {
+                    html += `
+                        <div class="cv-item">
+                            <div class="cv-item-header">${degree}${field ? ' in ' + field : ''}</div>
+                            <div class="cv-item-subheader">
+                                ${institution}${location ? ', ' + location : ''}
+                                ${startYear || endYear ? ' (' + (startYear || '') + (endYear ? ' - ' + endYear : '') + ')' : ''}
+                            </div>
+                            ${cgpa ? `<div class="cv-item-description">CGPA/Grade: ${cgpa}</div>` : ''}
+                            ${achievements.trim() ? `<div class="cv-item-description">${achievements.replace(/\n/g, '<br>')}</div>` : ''}
+                        </div>
+                    `;
+                }
+            });
+            
+            educationList.innerHTML = html || '<p>No education information added yet.</p>';
+        }
+
+        // Update experience preview
+        function updateExperiencePreview() {
+            const experienceItems = document.querySelectorAll('.experience-item');
+            const experienceList = document.getElementById('experienceList');
+            
+            let html = '';
+            experienceItems.forEach(item => {
+                const title = item.querySelector('[name="title"]').value;
+                const company = item.querySelector('[name="company"]').value;
+                const location = item.querySelector('[name="location"]').value;
+                const startDate = item.querySelector('[name="startDate"]').value;
+                const endDate = item.querySelector('[name="endDate"]').value;
+                const isCurrent = item.querySelector('[name="isCurrent"]').checked;
+                const description = item.querySelector('[name="description"]').value;
+                const achievements = item.querySelector('[name="achievements"]').value;
+
+                if (title.trim()) {
+                    const dateRange = startDate ? 
+                        formatDate(startDate) + ' - ' + (isCurrent ? 'Present' : (endDate ? formatDate(endDate) : 'Present')) : '';
+                    
+                    html += `
+                        <div class="cv-item">
+                            <div class="cv-item-header">${title}</div>
+                            <div class="cv-item-subheader">
+                                ${company}${location ? ', ' + location : ''}
+                                ${dateRange ? ' | ' + dateRange : ''}
+                            </div>
+                            ${description.trim() ? `<div class="cv-item-description">${description}</div>` : ''}
+                            ${achievements.trim() ? `<div class="cv-item-description"><strong>Key Achievements:</strong><br>${achievements.replace(/\n/g, '<br>')}</div>` : ''}
+                        </div>
+                    `;
+                }
+            });
+            
+            experienceList.innerHTML = html || '<p>No work experience added yet.</p>';
+        }
+
+        // Update skills preview
+        // Update skills preview
+function updateSkillsPreview() {
+    const skillItems = document.querySelectorAll('.skills-item');
+    const skillsList = document.getElementById('skillsList');
+    
+    let html = '';
+    skillItems.forEach(item => {
+        const category = item.querySelector('[name="category"]').value;
+        const skills = item.querySelector('[name="skills"]').value;
+
+        if (category.trim() && skills.trim()) {
+            const skillsArray = skills.split(',').map(s => s.trim()).filter(s => s);
+            const skillsText = skillsArray.join(' • ');
+            
+            html += `
+                <div class="skill-category">
+                    <strong>${category}:</strong> ${skillsText}
+                </div>
+            `;
+        }
+    });
+    
+    skillsList.innerHTML = html || '<p>No skills added yet.</p>';
+}
+
+        // Update certificates preview
+        function updateCertificatesPreview() {
+            const certificateItems = document.querySelectorAll('.certificate-item');
+            const certificatesList = document.getElementById('certificatesList');
+            
+            let html = '';
+            certificateItems.forEach(item => {
+                const name = item.querySelector('[name="name"]').value;
+                const issuer = item.querySelector('[name="issuer"]').value;
+                const issueDate = item.querySelector('[name="issueDate"]').value;
+                const expiryDate = item.querySelector('[name="expiryDate"]').value;
+                const credentialId = item.querySelector('[name="credentialId"]').value;
+                const url = item.querySelector('[name="url"]').value;
+
+                if (name.trim()) {
+                    const dateInfo = issueDate ? 
+                        `Issued: ${formatDate(issueDate)}${expiryDate ? ` | Expires: ${formatDate(expiryDate)}` : ''}` : '';
+                    
+                    html += `
+                        <div class="cv-item">
+                            <div class="cv-item-header">${name}</div>
+                            <div class="cv-item-subheader">${issuer}${dateInfo ? ' | ' + dateInfo : ''}</div>
+                            ${credentialId ? `<div class="cv-item-description">Credential ID: ${credentialId}</div>` : ''}
+                            ${url ? `<div class="cv-item-description"><a href="${url}" target="_blank">View Certificate</a></div>` : ''}
+                        </div>
+                    `;
+                }
+            });
+            
+            certificatesList.innerHTML = html || '<p>No certificates added yet.</p>';
+        }
+
+        // Update projects preview
+        function updateProjectsPreview() {
+            const projectItems = document.querySelectorAll('.project-item');
+            const projectsList = document.getElementById('projectsList');
+            
+            let html = '';
+            projectItems.forEach(item => {
+                const name = item.querySelector('[name="name"]').value;
+                const technologies = item.querySelector('[name="technologies"]').value;
+                const description = item.querySelector('[name="description"]').value;
+                const url = item.querySelector('[name="url"]').value;
+                const github = item.querySelector('[name="github"]').value;
+
+                if (name.trim()) {
+                    html += `
+                        <div class="cv-item">
+                            <div class="cv-item-header">${name}</div>
+                            ${technologies ? `<div class="cv-item-subheader">Technologies: ${technologies}</div>` : ''}
+                            ${description.trim() ? `<div class="cv-item-description">${description}</div>` : ''}
+                            <div class="cv-item-description">
+                                ${url ? `<a href="${url}" target="_blank">Live Demo</a>` : ''}
+                                ${url && github ? ' | ' : ''}
+                                ${github ? `<a href="${github}" target="_blank">GitHub</a>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            projectsList.innerHTML = html || '<p>No projects added yet.</p>';
+        }
+
+        // Utility function to format date
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString + '-01');
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        }
+
+        // Dynamic section management functions
+        // Dynamic section management functions - Make sure these are at the global scope
+function addEducation() {
+    const container = document.getElementById('educationContainer');
+    if (!container) {
+        console.error('Education container not found');
+        return;
+    }
+    
+    const firstItem = container.querySelector('.education-item');
+    if (!firstItem) {
+        console.error('No education template found');
+        return;
+    }
+    
+    const template = firstItem.cloneNode(true);
+    
+    // Clear all input values
+    template.querySelectorAll('input, textarea').forEach(input => {
+        input.value = '';
+        input.checked = false;
+    });
+    
+    container.appendChild(template);
+    updatePreview();
+}
+
+function removeEducation(button) {
+    const container = document.getElementById('educationContainer');
+    if (container && container.children.length > 1) {
+        button.closest('.education-item').remove();
+        updatePreview();
+    }
+}
+
+function addExperience() {
+    const container = document.getElementById('experienceContainer');
+    if (!container) return;
+    
+    const firstItem = container.querySelector('.experience-item');
+    if (!firstItem) return;
+    
+    const template = firstItem.cloneNode(true);
+    
+    template.querySelectorAll('input, textarea').forEach(input => {
+        input.value = '';
+        input.checked = false;
+    });
+    
+    container.appendChild(template);
+    updatePreview();
+}
+
+function removeExperience(button) {
+    const container = document.getElementById('experienceContainer');
+    if (container && container.children.length > 1) {
+        button.closest('.experience-item').remove();
+        updatePreview();
+    }
+}
+
+function addSkill() {
+    const container = document.getElementById('skillsContainer');
+    if (!container) return;
+    
+    const firstItem = container.querySelector('.skills-item');
+    if (!firstItem) return;
+    
+    const template = firstItem.cloneNode(true);
+    
+    template.querySelectorAll('input').forEach(input => {
+        input.value = '';
+    });
+    
+    container.appendChild(template);
+    updatePreview();
+}
+
+function removeSkill(button) {
+    const container = document.getElementById('skillsContainer');
+    if (container && container.children.length > 1) {
+        button.closest('.skills-item').remove();
+        updatePreview();
+    }
+}
+
+function addCertificate() {
+    const container = document.getElementById('certificatesContainer');
+    if (!container) return;
+    
+    const firstItem = container.querySelector('.certificate-item');
+    if (!firstItem) return;
+    
+    const template = firstItem.cloneNode(true);
+    
+    template.querySelectorAll('input').forEach(input => {
+        input.value = '';
+    });
+    
+    container.appendChild(template);
+    updatePreview();
+}
+
+function removeCertificate(button) {
+    const container = document.getElementById('certificatesContainer');
+    if (container && container.children.length > 1) {
+        button.closest('.certificate-item').remove();
+        updatePreview();
+    }
+}
+
+function addProject() {
+    const container = document.getElementById('projectsContainer');
+    if (!container) return;
+    
+    const firstItem = container.querySelector('.project-item');
+    if (!firstItem) return;
+    
+    const template = firstItem.cloneNode(true);
+    
+    template.querySelectorAll('input, textarea').forEach(input => {
+        input.value = '';
+    });
+    
+    container.appendChild(template);
+    updatePreview();
+}
+
+function removeProject(button) {
+    const container = document.getElementById('projectsContainer');
+    if (container && container.children.length > 1) {
+        button.closest('.project-item').remove();
+        updatePreview();
+    }
+}
+
+
+        
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+
+
+
+
+
+        // Tab switching functionality - Add this to your existing JavaScript
+
+// Initialize tab functionality
+// Initialize the application
+
+
+// Initialize the application - Modified for preloading
+document.addEventListener('DOMContentLoaded', async function() {
+    // Show loading state
+    showLoadingState();
+    
+    try {
+        // Load user session first
+        await loadUserSession();
+        
+        // Load existing CV data BEFORE setting up form listeners
+        await loadExistingCV();
+        
+        // Set up form listeners after data is loaded
+        setupFormListeners();
+        
+        // Switch to preview tab after everything is loaded
+        switchTab('preview');
+        
+    } catch (error) {
+        console.error('Error initializing app:', error);
+        showNotification('Error loading CV data', 'error');
+    } finally {
+        // Hide loading state
+        hideLoadingState();
+    }
+});
+
+// Show loading state
+function showLoadingState() {
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'loadingOverlay';
+    loadingOverlay.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 18px;
+        ">
+            <div>
+                <div style="text-align: center;">
+                    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                    Loading your CV...
+                </div>
+            </div>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    document.body.appendChild(loadingOverlay);
+}
+
+// Hide loading state
+function hideLoadingState() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.remove();
+    }
+}
+
+
+// Save form data to localStorage as backup
+// Save form data to localStorage with timestamp
+function saveToLocalStorage() {
+    if (!currentUserEmail) return;
+    
+    const cvData = collectFormData();
+    const dataWithTimestamp = {
+        ...cvData,
+        lastModified: new Date().toISOString(),
+        localVersion: true
+    };
+    
+    localStorage.setItem(`cv_backup_${currentUserEmail}`, JSON.stringify(dataWithTimestamp));
+    console.log('Saved to localStorage at:', dataWithTimestamp.lastModified);
+}
+
+// Load from localStorage with timestamp info
+function loadFromLocalStorage() {
+    if (!currentUserEmail) return null;
+    
+    const backup = localStorage.getItem(`cv_backup_${currentUserEmail}`);
+    if (backup) {
+        const data = JSON.parse(backup);
+        console.log('Found localStorage data from:', data.lastModified);
+        return data;
+    }
+    return null;
+}
+
+// Smart sync function to handle conflicts
+async function smartSync() {
+    if (!currentUserEmail) return;
+    
+    try {
+        const localData = loadFromLocalStorage();
+        
+        if (!localData) return;
+        
+        // Get latest data from Supabase
+        const { data: supabaseData, error } = await supabase
+            .from('cv_profiles')
+            .select('*')
+            .eq('user_email', currentUserEmail)
+            .single();
+            
+        if (error && error.code !== 'PGRST116') {
+            throw error;
+        }
+        
+        // If no data in Supabase, upload localStorage data
+        if (!supabaseData) {
+            await saveToSupabase(localData);
+            showNotification('Synced local data to cloud', 'success');
+            return;
+        }
+        
+        // Compare timestamps if available
+        const localTime = new Date(localData.lastModified || 0);
+        const supabaseTime = new Date(supabaseData.updated_at || supabaseData.created_at || 0);
+        
+        if (localTime > supabaseTime) {
+            // Local data is newer, upload to Supabase
+            await saveToSupabase(localData);
+            showNotification('Synced newer local changes to cloud', 'success');
+        } else if (supabaseTime > localTime) {
+            // Supabase data is newer, update local
+            populateForm(supabaseData);
+            saveToLocalStorage();
+            updatePreview();
+            showNotification('Updated with newer cloud data', 'info');
+        }
+        
+    } catch (error) {
+        console.error('Error during smart sync:', error);
+    }
+}
+
+// Auto-sync every 30 seconds when online
+let syncInterval;
+
+function startAutoSync() {
+    // Clear existing interval
+    if (syncInterval) {
+        clearInterval(syncInterval);
+    }
+    
+    // Start new interval
+    syncInterval = setInterval(async () => {
+        if (navigator.onLine && currentUserEmail) {
+            await smartSync();
+        }
+    }, 30000); // 30 seconds
+}
+
+// Start auto-sync after initialization
+document.addEventListener('DOMContentLoaded', async function() {
+    // ... your existing initialization code ...
+    
+    // Start auto-sync
+    startAutoSync();
+});
+
+// Handle online/offline events
+window.addEventListener('online', () => {
+    showNotification('Back online - syncing data', 'info');
+    smartSync();
+    startAutoSync();
+});
+
+window.addEventListener('offline', () => {
+    showNotification('Offline mode - changes will sync when reconnected', 'warning');
+    clearInterval(syncInterval);
+});
+
+
+
+
+
+// Initialize tabs and set default active tab
+function initializeTabs() {
+    // Set Edit tab as active by default
+    switchTab('edit');
+    
+    // Add event listeners to tab buttons
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.onclick.toString().match(/switchTab\('(\w+)'\)/)[1];
+            switchTab(tabName);
+        });
+    });
+}
+function switchTab(tabName) {
+    // Remove active class from all tabs and tab contents
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Add active class to clicked tab
+    const activeTabButton = document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`);
+    if (activeTabButton) {
+        activeTabButton.classList.add('active');
+    }
+    
+    // Show corresponding tab content
+    const tabContent = document.getElementById(tabName + 'Tab');
+    if (tabContent) {
+        tabContent.classList.add('active');
+    }
+    
+    // Always update preview when switching to preview tab
+    if (tabName === 'preview') {
+        setTimeout(() => updatePreview(), 50);
+    }
+}
+// Optional: Add keyboard shortcut for tab switching
+document.addEventListener('keydown', function(e) {
+    // Ctrl + 1 for Edit tab, Ctrl + 2 for Preview tab
+    if (e.ctrlKey && e.key === '1') {
+        e.preventDefault();
+        switchTab('edit');
+    } else if (e.ctrlKey && e.key === '2') {
+        e.preventDefault();
+        switchTab('preview');
+    }
+});
+
+
+
+
+
+
+// Make functions globally accessible
+window.addEducation = addEducation;
+window.removeEducation = removeEducation;
+window.addExperience = addExperience;
+window.removeExperience = removeExperience;
+window.addSkill = addSkill;
+window.removeSkill = removeSkill;
+window.addCertificate = addCertificate;
+window.removeCertificate = removeCertificate;
+window.addProject = addProject;
+window.removeProject = removeProject;
+window.switchTab = switchTab;
+
+// Debug function - call this in browser console to check structure
+function debugSections() {
+    console.log('Education container:', document.getElementById('educationContainer'));
+    console.log('Education items:', document.querySelectorAll('.education-item'));
+    console.log('Experience container:', document.getElementById('experienceContainer'));
+    console.log('Experience items:', document.querySelectorAll('.experience-item'));
+}
+
+// Optional: Auto-switch to preview when form is saved
+// Modify your existing handleSubmit function to include this line after successful save:
+// switchTab('preview');
+
+// You might also want to add this CSS to ensure smooth transitions
+// Add this to your existing CSS or create a new style tag:
+
+const tabStyles = `
+<style>
+.tab-content {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+    opacity: 1;
+}
+
+.tab {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.tab:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.tab.active {
+background:  #c0dffb;
+//    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+</style>
+
+
+`;
+
+// Inject the styles
+document.head.insertAdjacentHTML('beforeend', tabStyles);
+    </script>
+
+</body>
+</html>
