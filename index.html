@@ -3,662 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouBuddy Index.html</title>
-    <script src="cordova.js"></script>
+    <title>JobCenter Authentication</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
-      
-    .loading-message {
-        padding: 20px;
-        text-align: center;
-        color: #888;
-    }
-    .error-message {
-        padding: 20px;
-        text-align: center;
-        color: #f44336;
-    }
-                * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
+            min-height: 100vh;
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            background-color: black;
-            color: #fff;
-            line-height: 1.6;
-            
-        }
-        .container {
-    width: 97vw;
-    max-width: 375px;
-    height: 97vh;
-    max-height: 770px;
-    margin: 0 auto;
-    background-color: #000000;
-    margin-bottom: 0;
-    overflow-y: auto;
-    position: relative;
-    scrollbar-width: none;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    justify-content: center;
-            align-items: center;
-}
-
-        .mobile-container {
+            padding: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
             position: relative;
-            width: 97vw; /* Adjusts to 90% of the viewport width */
-            max-width: 375px; /* Original width as the maximum limit */
-            height: 97vh; /* Adjusts to 90% of the viewport height */
-            max-height: 770px; /* Original height as the maximum limit */
-            margin: 0 auto;
-            
-            overflow-x: hidden;
-            overflow-y: hidden;
-            background: black;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            
-        }
-        @media (min-width: 768px) {
-            .container {
-                width: 50vw; /* Adjust for larger screens */
-                height: 80vh;
-            }
+            overflow: hidden;
         }
 
-        .content {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 20px;
-            text-align: center;
-            padding-bottom: 80px; /* Space for taskbar */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none;  /* Internet Explorer 10+ */
-            overflow-x: hidden;
-            justify-content: center;
-            align-items: center;
-            
-            
-        }
-
-        .content::-webkit-scrollbar { 
-            width: 0px; 
-            background: transparent; /* Chrome/Safari/Webkit */
-        }
-
-        .menu-btn {
-    position: absolute;
-    top: 50%; /* Center vertically relative to the header */
-    left: 20px; /* Distance from the left edge */
-    transform: translateY(-50%); /* Offset for vertical centering */
-    font-size: 24px;
-    background: black;
-    border: none;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 1000;
-    transition: 0.3s ease-in-out;
-}
-
-        .side-menu {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1001;
+        body::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            background-color: #1a1a1a;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .side-menu a {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #fff;
-            display: block;
-            transition: 0.3s;
-            border-left: 3px solid transparent;
-        }
-
-        .side-menu a:hover {
-            background-color: #2d2d2d;
-            border-left: 3px solid #4CAF50;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            font-size: 30px;
-            color: #fff;
-        }
-
-        
-
-        
-
-        /* Updated Taskbar Styles */
-        .taskbar {
-            position: fixed;
+            right: 0;
             bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            border-top: 1px solid #333;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 135, 0.05) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        .container {
+            width: 100vw;
             max-width: 375px;
+            height: 100vh;
+            max-height: 770px;
             margin: 0 auto;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-bottom: 5px;
-        }
-
-        .taskbar-btn {
+            background: transparent;  /* Instead of the gradient */
+    backdrop-filter: none;    /* Remove blur effect */
+    border: none;            /* Remove border */
+    box-shadow: none;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            background: transparent;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            transition: 0.3s;
-            
-            
-
-        }
-        #universityTaskbarBtn {
-            
-            margin: 0 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            background: transparent;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        #universityTaskbarText {
-            transform: scale(1) translateY(-8px);
-            margin: 0 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            background: transparent;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            transition: 0.3s;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+            padding: 20px;
+            border-radius: 0;
         }
 
-        
-
-        .taskbar-btn-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .taskbar-btn-icon svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-        }
-
-        .taskbar-btn span {
-            font-size: 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 60px;
-            text-align: center;
-        }
-
-        .taskbar-btn:hover, .taskbar-btn.university-selected {
-            color: #4CAF50;
-           
-        }
-
-
-
-
-
-
-
-        .container::-webkit-scrollbar {
-            display: none;
-        }
-    
-        @media (min-width: 768px) {
-            .container {
-                width: 50vw;
-                height: 80vh;
-            }
-        }
-    
-        
-
-
-    
-.header.hidden {
-    transform: translateY(-100%); /* Moves the header upwards smoothly */
-    opacity: 0; /* Gradually fades out */
-    pointer-events: none; /* Prevent interaction when hidden */
-    height: 0;
-    
-}
-
-
-    
-.header h1 {
-    color: #4CAF50;
-    margin: 0; /* Remove default margins */
-    font-size: 22px;
-    margin-right: 10px; /* Add space between menu button and h1 */
-}
-        
-        .header p {
-            color: #ffffff;
-        }
-    
-        
-    
-        .post-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 16px;
-}
-
-/* Styling individual posts with thin shadow line */
-.post {
-    padding: 16px;
-    margin-bottom: 12px;
-    background-color: #000000;
-    color: #ffffff;
-    box-shadow: inset 0 -0.2px 0 rgba(230, 230, 230, 0.5); /* Thin shadow line at the bottom */
-    position: relative;
-}
-
-/* Styling for the post header */
-.post-header {
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-/* Styling for the heading, similar to Twitter/X heading size */
-.post-heading {
-    font-weight: 600; /* Bold heading */
-    font-size: 16px; /* Larger heading size */
-    line-height: 1.25;
-    color: #ffffff;
-    margin: 0; /* Removes default margin */
-    padding: 0; /* Removes any default padding */
-    letter-spacing: 0.5px; /* Slight letter spacing for readability */
-    text-align: left; /* Aligns text to the left */
-}
-
-/* Text content of the post, matched to Twitter/X text size */
-.text-post {
-    font-size: 15px; /* Smaller text size */
-    line-height: 1.5;
-    color: #ffffff;
-    white-space: pre-wrap; /* Ensures wrapping of text */
-    word-wrap: break-word; /* Prevents overflow */
-    margin: 0; /* Removes default margin */
-    padding: 0; /* Removes any default padding */
-    font-weight: 350; /* Light text weight */
-    text-align: left; /* Aligns text to the left */
-}
-
-/* Caption styling to align left and match text size of tweets */
-.caption {
-    font-weight: 600; /* Bold heading */
-    font-size: 16px; /* Larger heading size */
-    line-height: 1.25;
-    color: #ffffff;
-    margin: 0; /* Removes default margin */
-    padding: 0; /* Removes any default padding */
-    letter-spacing: 0.5px; /* Slight letter spacing for readability */
-    text-align: left; /* Aligns text to the left */
-}
-        .media-container {
-            margin: 12px 0;
-            overflow: hidden;
-            background-color: #1c1c1c;
-        }
-    
-        .media-container img,
-        .media-container video {
-            width: 100%;
-            height: auto;
-            display: block;
-            cursor: pointer;
-        }
-        
-    
-        .timestamp {
-            font-size: 12px;
-            color: #7a7a7a;
-            
-            text-align: right; /* Align timestamp to the right */
-    margin-top: 8px; /* Space between text and timestamp */
-        }
-    
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            cursor: pointer;
-        }
-    
-        .modal-content {
+        .switch-btn {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 90%;
-            max-height: 90vh;
-        }
-    
-        .back-to-top {
-    position: fixed;
-    bottom: 70px;
-    right: 20px;
-    background: linear-gradient(45deg, #4CAF50, #45a049);
-    color: white;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    border: none;
-    font-size: 34px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.back-to-top.visible {
-    opacity: 1;
-    display: flex;
-}
-
-        .refresh-indicator {
-            text-align: center;
-            padding: 10px;
-            color: #4CAF50;
-            display: none;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 150, 255, 0.3) 100%);
+            color: #00e5ff;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            padding: 5px 7px;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
-        .end-message {
-            background-color: #4CAF50;
-            color: white;
-            font-size: 18px;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            margin-top: 20px;
+        .switch-btn::before {
+            content: '⇄';
+            font-size: 1rem;
+            font-weight: bold;
         }
-        
 
+        .switch-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.3) 0%, rgba(0, 150, 255, 0.4) 100%);
+            border-color: rgba(0, 229, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+            transform: translateY(-1px);
+        }
 
         .header {
-    position: fixed;
-    top: 5px;
-    background-color: #000000;
-    padding: 22px;
-    z-index: 1000;
-    text-align: center;
-    width: 100%;
-    transition: all 0.6s ease-in-out;
-    
-    overflow: hidden;
-    display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
-    position: fixed;
-    top: 5px;
-    font-size: 12px;     
-            
+            text-align: center;
+            margin: 60px 0 40px 0;
+        }
+
+        .title {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: none;
+            background: linear-gradient(135deg, #ffffff 0%, #00e5ff 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .form-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        input, select {
             width: 100%;
-            height: 20px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00e5ff;
+            background: rgba(0, 229, 255, 0.1);
+            box-shadow: 
+                0 0 0 2px rgba(0, 229, 255, 0.2),
+                0 0 20px rgba(0, 229, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2300e5ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 16px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 50px;
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: #ffffff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00e5ff 0%, #0066cc 100%);
+            color: #000000;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 10px 30px rgba(0, 229, 255, 0.4),
+                0 0 20px rgba(0, 229, 255, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .field-group {
+            transition: all 0.4s ease;
+        }
+
+        .field-group.hidden {
+            display: none;
+        }
+
+        .page {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* Loading animation */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .submit-btn {
+            background: linear-gradient(135deg, #666666 0%, #444444 100%);
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateY(-100px);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(20px);
+            border: 1px solid;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, rgba(0, 255, 135, 0.2) 0%, rgba(0, 200, 100, 0.3) 100%);
+            color: #00ff87;
+            border-color: rgba(0, 255, 135, 0.3);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, rgba(255, 0, 100, 0.2) 0%, rgba(200, 0, 80, 0.3) 100%);
+            color: #ff0064;
+            border-color: rgba(255, 0, 100, 0.3);
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 150, 255, 0.3) 100%);
+            color: #00e5ff;
+            border-color: rgba(0, 229, 255, 0.3);
+        }
+
+       
+
+        /* Mobile optimizations */
+        @media (max-width: 375px) {
+            .container {
+                padding: 16px;
+            }
             
-}
+            .title {
+                font-size: 2.2rem;
+            }
 
-.feed {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px;
-    
-    transition: margin-top 0.6s ease-in-out;
-    overflow-x: hidden;
-}
+            .switch-btn {
+                top: 16px;
+                right: 16px;
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
 
-/* Add new loading styles */
-.loading-container {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-    background-color: #000000;
-    z-index: 9;
-}
-
-.loading-circle {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto;
-    border: 3px solid #4CAF50;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
-}
-
-.loading-text {
-    margin-top: 8px;
-    color: #4CAF50;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-        
+            .header {
+                margin: 50px 0 30px 0;
+            }
+        }
 
 
-
-
-.feed.expand-top {
-    margin-top: 0; /* Smoothly move the posts container to the top */
-}
-#feed.shift-up {
-    transform: translateY(-50px); /* Adjust the value to match the header height */
-}
-
-
-
-
-
-.post-bottom-bar {
-    display: flex;
-    justify-content: space-between; /* Change back to space-between */
-    align-items: center;
-    margin-top: 10px;
-}
-
-.save-icon {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    user-select: none;
-    color: #888;
-    transition: color 0.3s;
-}
-
-.save-icon.saved {
-    color: #4CAF50;
-}
-
-.save-icon.saved svg {
-    fill: #4CAF50;
-    stroke: #4CAF50;
-}
-.timestamp {
-    font-size: 12px;
-    color: #7a7a7a;
-}
-
-
-.mcq-post {
-        background: #000;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .mcq-question {
-        font-size: 16px;
-        color: #fff;
-        margin-bottom: 20px;
-        line-height: 1.5;
-        font-weight: 500;
-    }
-
-    .mcq-options {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .mcq-option {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #333;
-        background: transparent;
-        color: #fff;
-        border-radius: 8px;
-        text-align: left;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        outline: none;
-    }
-
-    
-
-    .mcq-option.correct {
-        background: #1b4d1b;
-        border-color: #2e7d32;
-    }
-
-    .mcq-option.incorrect {
-        background: #4d1b1b;
-        border-color: #7d2e2e;
-    }
-
-    .mcq-feedback {
-        margin-top: 16px;
-        padding: 12px;
-        border-radius: 6px;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-
-    .feedback-correct {
-        background: #1b4d1b;
-        color: #fff;
-        padding: 12px;
-        border-radius: 6px;
-    }
-
-    .feedback-incorrect {
-        background: #4d1b1b;
-        color: #fff;
-        padding: 12px;
-        border-radius: 6px;
-    }
-
-    .mcq-post.answered .mcq-option:not(.selected) {
-        opacity: 0.7;
-    }
-
-
-    .post-loading {
-    opacity: 0;
-    animation: fadeIn 0.3s ease forwards;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.gif-overlay {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 4px 8px;
-    border-radius: 4px;
-    z-index: 1;
-}
-
-.gif-indicator {
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-
-
-
-* {
+        * {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Disable highlight on Android Chrome/WebView */
     tap-highlight-color: rgba(0, 0, 0, 0);        /* Disable highlight on other Android browsers */
     outline: none;                                /* Remove outline for better UI */
@@ -668,1807 +331,407 @@
     -webkit-touch-callout: none;                 /* Disable callout menu on long press */
 }
 
+        /* Scrollbar styling */
+        /* .container::-webkit-scrollbar {
+            width: 4px;
+        }
 
+        .container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-
-
-
-
-        
+        .container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #00e5ff 0%, #0066cc 100%);
+            border-radius: 2px; 
+        }*/
     </style>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
-    <div class="mobile-container">
-        <div class="content" id="homePage">
+    <div class="container">
+        <!-- Registration Page -->
+        <div id="register-page" class="page active">
+            <button class="switch-btn" onclick="switchToLogin()">Switch to Login</button>
             
-            <div id="sideMenu" class="side-menu">
-                <a href="javascript:void(0)" class="close-btn" onclick="closeMenu()">&times;</a>
-                <a href="#" id="universityOption">University</a>
-                <a href="./gamelist.html">Play Amazing Games</a>
-                <a href="./aboutus.html">About Us</a>
-                <a href="./switch.html">Switch University</a>
-                <a href="./courses.html">Free Courses</a>
-                <a href="./portfolio.html">Meet the Founder</a>
-                <a href="./QRscanner.html">QR Testing</a>
-                <a href="./Shoppinglinks.html">Shopping Links</a>
-                
+            <div class="header">
+                <h1 class="title">JobCenter</h1>
+                <p class="subtitle">Registration Portal</p>
             </div>
-            <div class="container">
-                <div class="header" id="header">
-                    <h1>Youbuddy</h1>
-                    <button class="menu-btn" onclick="openMenu()">☰</button>
+            
+            <div class="form-container">
+                <form id="registration-form">
+                    <div class="form-group">
+                        <label for="reg-user-type">Registration Type</label>
+                        <select id="reg-user-type" required>
+                            <option value="student">Student</option>
+                            <option value="hr">HR Professional</option>
+                        </select>
+                    </div>
                     
-                </div>
-
-                <div id="savedHeader" class="header" style="display: none;">
-                    <h1>Saved Posts</h1>
-                </div>
-                
-                <div class="feed" id="feed"></div>
-                
-                <!-- Add the saved section here -->
-                <div id="savedSection" style="display: none;">
-                    <div id="savedPostsContainer"></div>
-                </div>
-                
-                
-                
+                    <div class="form-group">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" placeholder="Create a secure password" required>
+                    </div>
+                    
+                    <div id="reg-student-fields" class="field-group">
+                        <div class="form-group">
+                            <label for="reg-whatsapp">WhatsApp Number</label>
+                            <input type="text" id="reg-whatsapp" placeholder="Enter your WhatsApp number">
+                        </div>
+                    </div>
+                    
+                    <div id="reg-hr-fields" class="field-group hidden">
+                        <div class="form-group">
+                            <label for="reg-company">Company Name</label>
+                            <input type="text" id="reg-company" placeholder="Enter your company name">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
             </div>
-            <div class="modal" id="mediaModal">
-                <img class="modal-content" id="modalContent">
-            </div>
-            <button class="back-to-top" id="backToTop">↑</button>
+        </div>
 
+        <!-- Login Page -->
+        <div id="login-page" class="page">
+            <button class="switch-btn" onclick="switchToRegister()">Switch to Register</button>
             
-            <div class="taskbar">
-                <button class="taskbar-btn" onclick="navigateToProfile()">
-                    <div class="taskbar-btn-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+            <div class="header">
+                <h1 class="title">JobCenter</h1>
+                <p class="subtitle">Login Portal</p>
+            </div>
+            
+            <div class="form-container">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-user-type">Login Type</label>
+                        <select id="login-user-type" required>
+                            <option value="student">Student</option>
+                            <option value="hr">HR Professional</option>
+                        </select>
                     </div>
-                    <span>Profile</span>
-                </button>
-                <button class="taskbar-btn" onclick="navigateToAboutUs()">
-                    <div class="taskbar-btn-icon">
-                        <img src="./youbuddylogo (2) (1) (1).jpg" alt="Chatbot Icon" style="width: 24px; height: 24px;">
+                    
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="Enter your email address" required>
                     </div>
-                    <span>About Us</span>
-                </button>
-                <button id="universityTaskbarBtn" class="taskbar-btn university-selected" onclick="handleUniversityNavigation()">
-                    <div class="taskbar-btn-icon">🎓</div>
-                    <span id="universityTaskbarText">Select Uni</span>
-                </button>
-                
-                <button class="taskbar-btn" onclick="navigateToChatbot()">
-                    <div class="taskbar-btn-icon">
-                        <!-- Replace the SVG with an image -->
-                        <img src="./boticonblack.jpg" alt="Chatbot Icon" style="width: 24px; height: 24px;">
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
                     </div>
-                    <span>Chatbot</span>
-                </button>
-                
-                <button class="taskbar-btn" onclick="navigateToGames()">
-                    <div class="taskbar-btn-icon">🎮</div>
-                    <span>Games</span>
-                </button>
+                    
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
             </div>
         </div>
     </div>
 
 <script>
-        
+        // INDEX.HTML JS
+        // Your database credentials
+const SUPABASE_URL = 'https://hyrdvlqgtkxtabpamdmc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cmR2bHFndGt4dGFicGFtZG1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwMDM0NjYsImV4cCI6MjA2MzU3OTQ2Nn0.UVO41KHOPQATqNJy5VnHaEaeGER3vXp0pqYqwigt5rE';
 
-        function openMenu() {
-            document.getElementById("sideMenu").style.width = "250px";
-        }
+// Initialize Supabase client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function closeMenu() {
-            document.getElementById("sideMenu").style.width = "0";
-        }
-
-        function handleUniversityNavigation() {
-            const universityPath = localStorage.getItem("universityPath");
-            if (universityPath) {
-                window.location.href = universityPath;
-            } else {
-                window.location.href = "./switch.html";
-            }
-        }
-
-        function navigateToUniversity() {
-            const universityPath = localStorage.getItem("universityPath");
-            if (universityPath) {
-                window.location.href = universityPath;
-            } else {
-                window.location.href = "./switch.html";
-            }
-        }
-
-        function navigateToProfile() {
-            window.location.href = "./userprofile.html";
-        }
-
-        function navigateToAboutUs() {
-            window.location.href = "./aboutus.html";
-        }
-
-        function navigateToChatbot() {
-            window.location.href = "./chatbot.html";
-        }
-        
-
-        function navigateToGames() {
-            window.location.href = "./gamelist.html";
-        }
-
-        window.onload = function() {
-            const selectedUniversity = localStorage.getItem("selectedUniversity");
-            const universityTaskbarText = document.getElementById("universityTaskbarText");
-            const universityOption = document.getElementById("universityOption");
-            const universityPath = localStorage.getItem("universityPath");
-            
-            if (selectedUniversity && universityPath) {
-                const words = selectedUniversity.split(' ');
-                const midPoint = Math.ceil(words.length / 2);
-                const firstHalf = words.slice(0, midPoint).join(' ');
-                const secondHalf = words.slice(midPoint).join(' ');
-                universityTaskbarText.innerHTML = `${firstHalf}<br>${secondHalf}`;
-                universityOption.innerHTML = selectedUniversity;
-                universityOption.href = universityPath;
-            } else {
-                universityTaskbarText.innerHTML = "Select<br>Uni";
-                universityOption.innerHTML = "Select University";
-            }
-            
-
-            // Auto-slide functionality
-            setInterval(nextSlide, 6000);
-        };
-
-
-
-
-
-
-
-// Supabase configuration
-const SUPABASE_URL = 'https://rbkqhwyinwvrtusmuipu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJia3Fod3lpbnd2cnR1c211aXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0Nzc3ODMsImV4cCI6MjA1MzA1Mzc4M30.jnyb8aSAsAdOYI_6U8jwP4LCxjX0LNUzIih2KdiOHkU';
-
-
-console.log("Supabase loaded:", typeof window.supabase !== 'undefined');
-
-// DOM Elements
-const feedContainer = document.getElementById('feed');
-const backToTop = document.getElementById('backToTop');
-const header = document.getElementById('header');
-
-
-async function testSupabase() {
-    try {
-        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const { data, error } = await client.from('tweets').select('count');
-        console.log("Connection test:", data, error);
-        return !error;
-    } catch (e) {
-        console.error("Connection test failed:", e);
-        return false;
-    }
+// Session management using localStorage for persistence
+function setUserSession(userType, userData) {
+    localStorage.setItem('jobcenter_user_type', userType);
+    localStorage.setItem('jobcenter_user_data', JSON.stringify(userData));
 }
 
-// Variables
-// Variables
-let tweets = [];
-let youtubeVideos = [];
-let images = [];
-let videos = [];
-let gifs = [];
-let mcqs = [];
-let pinnedTweet = null;
-let isLoading = false;
-let lastScrollTop = 0;
-let currentBatch = 0;
-const POST_LIMIT = 10;
-let isEndMessageDisplayed = false;
-let displayedContent = {
-    text: new Set(),
-    youtube: new Set(), // Add this line
-    image: new Set(),
-    video: new Set(),
-    gif: new Set(),
-    mcq: new Set()
-};
-
-// Initialize supabase client
-let supabaseClient;
-
-
-// Add these variables to your variables section
-let isPulling = false;
-let pullStartY = 0;
-let pullDistance = 0;
-const PULL_THRESHOLD = 80; // Pixels to pull down before refresh triggers
-
-// Main function to initialize app
-async function initApp() {
-    try {
-        console.log("Initializing app...");
-        
-        // Show loading state
-        feedContainer.innerHTML = '<div class="loading-message">Connecting to database...</div>';
-        
-        // Initialize Supabase
-        if (typeof supabase === 'undefined') {
-            // Check if window.supabase exists
-            if (typeof window.supabase === 'undefined') {
-                throw new Error("Supabase client not available. Make sure to include the Supabase JS script in your HTML.");
-            }
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } else {
-            // If global supabase object exists
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
-        
-        console.log("Supabase client initialized");
-        
-        // Fetch content
-        await fetchAllContent();
-        
-        // Setup event listeners
-        setupEventListeners();
-        
-    } catch (error) {
-        console.error("Initialization error:", error);
-        feedContainer.innerHTML = `<div class="error-message">Error: ${error.message}<br>Make sure you've included the Supabase JS script in your HTML.</div>`;
-    }
-}
-// Add this to your variables section
-let contentCycles = {
-    'text': { shown: new Set(), total: 0 },
-    'youtube': { shown: new Set(), total: 0 }, // Add this line
-    'image': { shown: new Set(), total: 0 },
-    'video': { shown: new Set(), total: 0 },
-    'gif': { shown: new Set(), total: 0 },
-    'mcq': { shown: new Set(), total: 0 }
-};
-
-// Fetch all content from Supabase
-// Fetch all content from Supabase
-// Fetch all content from Supabase
-// Fetch all content from Supabase
-async function fetchAllContent() {
-    try {
-        feedContainer.innerHTML = '<div class="loading-message">Loading content...</div>';
-        
-        console.log("Fetching pinned tweets...");
-        const { data: pinnedData, error: pinnedError } = await supabaseClient
-            .from('pinned_tweets')
-            .select('*')
-            .eq('hidden', false) // Only get non-hidden pinned tweets
-            .order('pinned_date', { ascending: false })
-            .limit(1);
-        
-        if (pinnedError) throw pinnedError;
-        pinnedTweet = pinnedData && pinnedData.length > 0 ? pinnedData[0] : null;
-        console.log(`Fetched pinned tweet:`, pinnedTweet);
-        
-        // Clear loading message and start feed
-        feedContainer.innerHTML = '';
-        
-        // Display pinned tweet first if exists
-        if (pinnedTweet) {
-            const pinnedElement = createPinnedTweetElement(pinnedTweet);
-            feedContainer.appendChild(pinnedElement);
-        }
-        
-        // Load a small batch of initial posts
-        await loadInitialPosts();
-        
-        // Then fetch remaining content in background
-        fetchContentInBackground();
-    } catch (error) {
-        console.error("Error fetching content:", error);
-        feedContainer.innerHTML = `<div class="error-message">Failed to load content: ${error.message}</div>`;
-    }
-}
-
-// Load initial posts fast
-async function loadInitialPosts() {
-    try {
-        // Get a small, curated set for immediate display
-        console.log("Loading initial posts...");
-        const initialCounts = {
-            tweets: 4, 
-            images: 2,
-            videos: 1,
-            youtubeVideos: 1,
-            gifs: 1,
-            mcqs: 1
-        };
-        
-        // Fetch initial tweets
-        const { data: initialTweets, error: tweetsError } = await supabaseClient
-            .from('tweets')
-            .select('*')
-            .limit(initialCounts.tweets);
-        
-        if (tweetsError) throw tweetsError;
-        tweets = initialTweets || [];
-        
-        // Fetch initial images
-        const { data: initialImages, error: imagesError } = await supabaseClient
-            .from('images')
-            .select('*')
-            .limit(initialCounts.images);
-        
-        if (imagesError) throw imagesError;
-        images = initialImages || [];
-        
-        // Fetch initial videos
-        const { data: initialVideos, error: videosError } = await supabaseClient
-            .from('videos')
-            .select('*')
-            .limit(initialCounts.videos);
-        
-        if (videosError) throw videosError;
-        videos = initialVideos || [];
-        
-        // Fetch initial YouTube videos
-        const { data: initialYouTube, error: youtubeError } = await supabaseClient
-            .from('youtube_videos')
-            .select('*')
-            .limit(initialCounts.youtubeVideos);
-        
-        if (youtubeError) throw youtubeError;
-        youtubeVideos = initialYouTube || [];
-        
-        // Fetch initial GIFs
-        const { data: initialGifs, error: gifsError } = await supabaseClient
-            .from('gifs')
-            .select('*')
-            .limit(initialCounts.gifs);
-        
-        if (gifsError) throw gifsError;
-        gifs = initialGifs || [];
-        
-        // Fetch initial MCQs
-        const { data: initialMcqs, error: mcqsError } = await supabaseClient
-            .from('mcqs')
-            .select('*')
-            .limit(initialCounts.mcqs);
-        
-        if (mcqsError) throw mcqsError;
-        mcqs = initialMcqs || [];
-        
-        // Update content cycle totals with what we have so far
-        contentCycles.text.total = tweets.length;
-        contentCycles.image.total = images.length;
-        contentCycles.video.total = videos.length;
-        contentCycles.youtube.total = youtubeVideos.length;
-        contentCycles.gif.total = gifs.length;
-        contentCycles.mcq.total = mcqs.length;
-        
-        // Clear any previously shown content tracking
-        Object.keys(contentCycles).forEach(type => {
-            contentCycles[type].shown.clear();
-        });
-        
-        // Load the initial posts to feed
-        loadPosts();
-        
-        console.log("Initial posts loaded");
-    } catch (error) {
-        console.error("Error loading initial posts:", error);
-        throw error;
-    }
-}
-
-// Fetch remaining content in background
-async function fetchContentInBackground() {
-    try {
-        console.log("Fetching remaining content in background...");
-        
-        // Fetch all tweets (beyond what we've loaded initially)
-        const { data: allTweets, error: tweetsError } = await supabaseClient
-            .from('tweets')
-            .select('*');
-        
-        if (!tweetsError && allTweets) {
-            tweets = allTweets;
-            contentCycles.text.total = tweets.length;
-        }
-        
-        // Fetch all images
-        const { data: allImages, error: imagesError } = await supabaseClient
-            .from('images')
-            .select('*');
-        
-        if (!imagesError && allImages) {
-            images = allImages;
-            contentCycles.image.total = images.length;
-        }
-        
-        // Fetch all videos
-        const { data: allVideos, error: videosError } = await supabaseClient
-            .from('videos')
-            .select('*');
-        
-        if (!videosError && allVideos) {
-            videos = allVideos;
-            contentCycles.video.total = videos.length;
-        }
-        
-        // Fetch all YouTube videos
-        const { data: allYouTube, error: youtubeError } = await supabaseClient
-            .from('youtube_videos')
-            .select('*');
-        
-        if (!youtubeError && allYouTube) {
-            youtubeVideos = allYouTube;
-            contentCycles.youtube.total = youtubeVideos.length;
-        }
-        
-        // Fetch all GIFs
-        const { data: allGifs, error: gifsError } = await supabaseClient
-            .from('gifs')
-            .select('*');
-        
-        if (!gifsError && allGifs) {
-            gifs = allGifs;
-            contentCycles.gif.total = gifs.length;
-        }
-        
-        // Fetch all MCQs
-        const { data: allMcqs, error: mcqsError } = await supabaseClient
-            .from('mcqs')
-            .select('*');
-        
-        if (!mcqsError && allMcqs) {
-            mcqs = allMcqs;
-            contentCycles.mcq.total = mcqs.length;
-        }
-        
-        console.log("Background content loading complete");
-    } catch (error) {
-        console.error("Error fetching background content:", error);
-        // Don't throw error here - we've already shown initial content
-    }
-}
-// Create pinned tweet element
-// Create pinned tweet element
-function createPinnedTweetElement(content) {
-    const post = document.createElement('div');
-    post.className = 'post pinned-post';
-    post.dataset.postId = content.id;
-
-    const timeFormatted = content.time || '12:00 PM'; // or whatever time you store
-    const dateFormatted = content.timestamp || 'Apr 6, 2025';
-
-    post.innerHTML = `
-        <div class="pinned-indicator">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2L12 22"></path>
-                <path d="M6 6L18 18"></path>
-            </svg>
-            Pinned
-        </div>
-        <div class="post-header">
-            ${content.dp_url ? `<img src="${content.dp_url}" alt="Profile" class="profile-pic zoomable-dp">` : '<div class="profile-pic-placeholder"></div>'}
-            <div class="user-info">
-                <span class="display-name">${content.heading}</span>
-                <span class="username">${content.username || 'username'}</span>
-            </div>
-        </div>
-        <div class="text-post">${content.text}</div>
-        <div class="tweet-footer-time">${timeFormatted} · ${dateFormatted}</div>
-
-        <!-- Zoom modal -->
-        <div class="dp-modal">
-            <div class="dp-modal-inner">
-                <span class="dp-close">&times;</span>
-                <img src="${content.dp_url}" class="dp-modal-content">
-            </div>
-        </div>
-    `;
-
-    // Zoom functionality
-    const img = post.querySelector('.zoomable-dp');
-    const modal = post.querySelector('.dp-modal');
-    const closeBtn = post.querySelector('.dp-close');
-
-    img.addEventListener('click', () => {
-        modal.style.display = 'flex';
-    });
-
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    return post;
-}
-
-
-
-
-
-// Setup event listeners
-function setupEventListeners() {
-    // Scroll event for infinite loading
-    feedContainer.addEventListener('scroll', () => {
-        const scrollTop = feedContainer.scrollTop;
-        const { scrollHeight, clientHeight } = feedContainer;
-        
-        // Header visibility
-        if (scrollTop > lastScrollTop) {
-            header.style.transform = 'translateY(-100%)';
-        } else {
-            header.style.transform = 'translateY(0)';
-        }
-        
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        
-        // Back to top button visibility
-        if (scrollTop > 100) {
-            backToTop.classList.add('visible');
-        } else {
-            backToTop.classList.remove('visible');
-        }
-        
-        // Load more content when near bottom
-        const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
-        if (scrollPercentage > 0.7 && !isLoading) {
-            isLoading = true;
-            loadPosts();
-            isLoading = false;
-        }
-    });
-    
-    // Add pull-to-refresh functionality
-    setupPullToRefresh();
-    
-    // Back to top button
-    backToTop.addEventListener('click', () => {
-        feedContainer.scrollTo({ top: 0, behavior: 'smooth' });
-        refreshFeed();
-    });
-}
-
-// Refresh feed
-// Refresh feed
-// Refresh feed
-// New function to setup pull-to-refresh
-function setupPullToRefresh() {
-    // Create pull-to-refresh indicator element
-    const refreshIndicator = document.createElement('div');
-    refreshIndicator.className = 'pull-refresh-indicator';
-    refreshIndicator.innerHTML = '<div class="refresh-spinner"></div><span>Release to refresh</span>';
-    refreshIndicator.style.position = 'absolute';
-    refreshIndicator.style.top = '-60px';
-    refreshIndicator.style.left = '0';
-    refreshIndicator.style.width = '100%';
-    refreshIndicator.style.height = '60px';
-    refreshIndicator.style.display = 'flex';
-    refreshIndicator.style.alignItems = 'center';
-    refreshIndicator.style.justifyContent = 'center';
-    refreshIndicator.style.transition = 'transform 0.2s';
-    refreshIndicator.style.zIndex = '1000';
-    document.querySelector('#feed').insertAdjacentElement('beforebegin', refreshIndicator);
-    
-    // Touch start event
-    feedContainer.addEventListener('touchstart', (e) => {
-        if (feedContainer.scrollTop === 0) {
-            isPulling = true;
-            pullStartY = e.touches[0].clientY;
-            pullDistance = 0;
-        }
-    });
-    
-    // Touch move event
-    feedContainer.addEventListener('touchmove', (e) => {
-        if (!isPulling) return;
-        
-        const touchY = e.touches[0].clientY;
-        pullDistance = touchY - pullStartY;
-        
-        if (pullDistance > 0) {
-            e.preventDefault(); // Prevent default scroll
-            
-            // Calculate resistance factor - gets harder to pull the further you go
-            const resistance = pullDistance > 100 ? 0.2 : 0.5;
-            const translateY = Math.min(pullDistance * resistance, PULL_THRESHOLD);
-            
-            feedContainer.style.transform = `translateY(${translateY}px)`;
-            refreshIndicator.style.transform = `translateY(${translateY}px)`;
-            
-            // Update indicator text
-            const refreshText = refreshIndicator.querySelector('span');
-            if (translateY >= PULL_THRESHOLD) {
-                refreshText.textContent = 'Release to refresh';
-            } else {
-                refreshText.textContent = 'Pull to refresh';
-            }
-        }
-    }, { passive: false });
-    
-    // Fix the touchend event in setupPullToRefresh
-feedContainer.addEventListener('touchend', () => {
-    if (!isPulling) return;
-    
-    // Reset pulling state
-    isPulling = false;
-    
-    // Animate back to original position
-    feedContainer.style.transition = 'transform 0.3s';
-    refreshIndicator.style.transition = 'transform 0.3s';
-    feedContainer.style.transform = '';
-    refreshIndicator.style.transform = '';
-    
-    // Reset transitions after animation
-    setTimeout(() => {
-        feedContainer.style.transition = '';
-        refreshIndicator.style.transition = '';
-    }, 300);
-    
-    // If pulled far enough, refresh feed
-    if (pullDistance >= PULL_THRESHOLD) {
-        // Show loading spinner while refreshing
-        const refreshText = refreshIndicator.querySelector('span');
-        refreshText.textContent = 'Refreshing...';
-        
-        // Properly call refreshFeed
-        refreshFeed();
-    }
-});
-}
-// Load posts into feed
-function loadPosts() {
-    // Get content for this batch
-    const contentItems = getContentBatch();
-    
-    if (contentItems.length === 0) {
-        if (!isEndMessageDisplayed) {
-            const endMessage = document.createElement('div');
-            endMessage.className = 'post end-message';
-            endMessage.textContent = "That's all for now! Click the arrow to see new content";
-            feedContainer.appendChild(endMessage);
-            isEndMessageDisplayed = true;
-        }
-        return;
-    }
-    
-    // Add content to feed
-    contentItems.forEach(item => {
-        const element = createContentElement(item);
-        if (element) {
-            feedContainer.appendChild(element);
-        }
-    });
-    
-    currentBatch++;
-}
-
-// Get a batch of content
-// Get a batch of content
-// Modify getContentBatch to use the content cycles
-function getContentBatch() {
-    const result = [];
-    const types = ['text', 'youtube', 'image', 'mcq', 'video', 'gif']; // Add 'youtube'
-    const contentArrays = {
-        'text': tweets,
-        'youtube': youtubeVideos, // Add this line
-        'image': images,
-        'video': videos,
-        'gif': gifs,
-        'mcq': mcqs
+function getUserSession() {
+    const userType = localStorage.getItem('jobcenter_user_type');
+    const userData = localStorage.getItem('jobcenter_user_data');
+    return {
+        userType: userType,
+        userData: userData ? JSON.parse(userData) : null
     };
-    
-    // Calculate how many of each type to include
-    const itemsPerType = Math.ceil(POST_LIMIT / types.length);
-    
-    // For each type in sequence
-    for (let i = 0; i < types.length; i++) {
-        const typeIndex = (i + currentBatch) % types.length;
-        const type = types[typeIndex];
+}
+
+function clearUserSession() {
+    localStorage.removeItem('jobcenter_user_type');
+    localStorage.removeItem('jobcenter_user_data');
+}
+
+// Check session on page load and redirect immediately to prevent flicker
+// In index.html, modify the checkUserSession function:
+function checkUserSession() {
+    const session = getUserSession();
+    if (session.userType && session.userData) {
+        // NEW: Hide body immediately to prevent blink
+        document.body.style.display = 'none';
         
-        const contentArray = contentArrays[type];
-        if (contentArray && contentArray.length > 0) {
-            // Get items of this type
-            const typedContent = contentArray.map(item => ({
-                ...item,
-                type: type,
-                contentId: type + '-' + (item.id || Math.random().toString(36).substr(2, 9))
-            }));
-            
-            // Check if we've shown all content of this type in the current cycle
-            if (contentCycles[type].shown.size >= contentCycles[type].total) {
-                // Reset for this type if we've shown everything
-                contentCycles[type].shown.clear();
-                console.log(`Completed full cycle of ${type} content, reshuffling...`);
-            }
-            
-            // Filter out already shown content in this cycle
-            const filteredContent = typedContent.filter(item => 
-                !contentCycles[type].shown.has(item.contentId)
-            );
-            
-            // If we somehow have no content left, skip this type
-            if (filteredContent.length === 0) {
-                continue;
-            }
-            
-            // Shuffle available content of this type
-            for (let j = filteredContent.length - 1; j > 0; j--) {
-                const k = Math.floor(Math.random() * (j + 1));
-                [filteredContent[j], filteredContent[k]] = [filteredContent[k], filteredContent[j]];
-            }
-            
-            // Take one item of this type
-            const selectedItem = filteredContent[0];
-            contentCycles[type].shown.add(selectedItem.contentId);
-            
-            // Also track it in the display set for this session
-            displayedContent[type].add(selectedItem.contentId);
-            
-            result.push(selectedItem);
+        // Redirect immediately without showing auth page
+        if (session.userType === 'student') {
+            window.location.replace('students.html');
+        } else if (session.userType === 'hr') {
+            window.location.replace('hr.html');
         }
+        return true;
     }
-    
-    return result;
+    return false;
 }
 
-// Update refreshFeed to reset the content cycles too
-function refreshFeed() {
-    feedContainer.innerHTML = '<div class="loading-message">Refreshing content...</div>';
-    isEndMessageDisplayed = false;
-    currentBatch = 0;
-    
-    // Reset display tracking
-    Object.keys(displayedContent).forEach(type => {
-        displayedContent[type].clear();
-    });
-    
-    // Reset content cycles - this will force a fresh shuffle on next load
-    Object.keys(contentCycles).forEach(type => {
-        contentCycles[type].shown.clear();
-    });
-    
-    // Fetch fresh content from the database
-    fetchAllContent();
-}
-// Create content element based on type
-function createContentElement(content) {
-    if (content.type === 'mcq') {
-        return createMCQElement(content);
-    } else {
-        return createPostElement(content);
+// Notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existing = document.querySelector('.notification');
+    if (existing) {
+        existing.remove();
     }
-}
 
-// Create post element
-function createPostElement(content) {
-    if (content.type === 'mcq') return null;
-    
-    const post = document.createElement('div');
-    post.className = 'post';
-    post.dataset.postId = content.id;
-    post.style.opacity = '1';
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
 
-    if (content.type === 'text') {
-        post.innerHTML = `
-            <div class="post-heading">${content.heading}</div>
-            <div class="text-post">${content.text}</div>
-            <div class="timestamp">${content.timestamp}</div>
-        `;
-    } else if (content.type === 'image') {
-        post.innerHTML = `
-            ${content.caption ? `<div class="text-post">${content.caption}</div>` : ''}
-            <div class="media-container" data-type="image">
-                <img src="${content.url}" 
-                     alt="${content.caption || 'Media content'}" 
-                     loading="lazy" 
-                     decoding="async">
-            </div>
-            <div class="timestamp">${content.timestamp}</div>
-        `;
-    } else if (content.type === 'video') {
-        post.innerHTML = `
-            ${content.caption ? `<div class="text-post">${content.caption}</div>` : ''}
-            <div class="media-container" data-type="video">
-                <div class="video-wrapper">
-                    <video 
-                        controls
-                        playsinline 
-                        loop
-                        preload="none"
-                        class="feed-video"
-                        style="width: 100%; height: 100%; object-fit: cover;"
-                    >
-                        <source src="${content.url}" type="video/mp4">
-                    </video>
-                </div>
-            </div>
-            <div class="timestamp">${content.timestamp}</div>
-        `;
-
-        const video = post.querySelector('video');
-        setupVideoAutoplay(video);
-
-    
-    } 
-   // Modify your createPostElement function's YouTube section
-else if (content.type === 'youtube') {
-    // Generate a unique ID for each YouTube iframe
-    const youtubeId = 'youtube-' + content.video_id + '-' + Math.floor(Math.random() * 10000);
-    
-    post.innerHTML = `
-        <div class="post-heading">${content.caption || 'YouTube Video'}</div>
-        <div class="media-container youtube-container" data-type="youtube" style="pointer-events: auto;">
-            <div class="video-wrapper youtube-wrapper" data-video-id="${content.video_id}" id="${youtubeId}-container">
-                <!-- We'll create the iframe programmatically to ensure API control -->
-                <div id="${youtubeId}"></div>
-            </div>
-        </div>
-        <div class="timestamp">${content.timestamp}</div>
-    `;
-    
-    // Create YouTube player once the element is added to DOM
+    // Trigger animation
     setTimeout(() => {
-        createYouTubePlayer(youtubeId, content.video_id);
+        notification.classList.add('show');
     }, 100);
+
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 4000);
 }
 
-// Define a global object to store YouTube player instances
-if (!window.youtubePlayers) {
-    window.youtubePlayers = {};
+// Page switching functions
+function switchToLogin() {
+    document.getElementById('register-page').classList.remove('active');
+    document.getElementById('login-page').classList.add('active');
 }
 
-else if (content.type === 'gif') {
-        post.innerHTML = `
-            ${content.caption ? `<div class="text-post">${content.caption}</div>` : ''}
-            <div class="media-container gif-container" data-type="gif">
-                <div class="gif-overlay">
-                    <span class="gif-indicator">GIF</span>
-                </div>
-                <img src="${content.url}" 
-                     alt="${content.caption || 'GIF content'}" 
-                     class="gif-media"
-                     loading="lazy" 
-                     decoding="async">
-            </div>
-            <div class="timestamp">${content.timestamp}</div>
-        `;
-
-        const gifImg = post.querySelector('.gif-media');
-        setupGifAutoplay(gifImg);
-    }
-
-    const mediaContainer = post.querySelector('.media-container');
-if (mediaContainer) {
-    if (content.type === 'video' || content.type === 'youtube') {
-        // Allow pointer events on video AND YouTube elements
-        mediaContainer.style.pointerEvents = 'auto';
-    } else {
-        mediaContainer.style.pointerEvents = 'none';
-    }
-}
-    return post;
-}
-// Function to create a YouTube player with API control
-function createYouTubePlayer(elementId, videoId) {
-    // Only proceed if YT API is loaded
-    if (typeof YT !== 'undefined' && YT.Player) {
-        // Create the player
-        const player = new YT.Player(elementId, {
-            videoId: videoId,
-            playerVars: {
-                'autoplay': 0,
-                'controls': 1,
-                'rel': 0,
-                'fs': 1, // Allow fullscreen
-                'modestbranding': 1
-            },
-            events: {
-                'onReady': onPlayerReady
-            }
-        });
-        
-        // Store the player instance
-        window.youtubePlayers[elementId] = player;
-        
-        // Set up intersection observer for this player
-        observeYouTubePlayer(elementId);
-    } else {
-        // If YT API isn't loaded yet, load it
-        if (!document.getElementById('youtube-api-script')) {
-            const tag = document.createElement('script');
-            tag.id = 'youtube-api-script';
-            tag.src = 'https://www.youtube.com/iframe_api';
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            
-            // Set up callback for when API loads
-            window.onYouTubeIframeAPIReady = function() {
-                createYouTubePlayer(elementId, videoId);
-            };
-        } else {
-            // API script is loading, try again in a moment
-            setTimeout(() => {
-                createYouTubePlayer(elementId, videoId);
-            }, 500);
-        }
-    }
+function switchToRegister() {
+    document.getElementById('login-page').classList.remove('active');
+    document.getElementById('register-page').classList.add('active');
 }
 
-// When player is ready, do nothing (we'll control it with the observer)
-function onPlayerReady(event) {
-    // Player is ready
-    console.log('YouTube player ready');
-}
+// Check if email exists
+async function checkEmailExists(email, userType) {
+    const tableNames = userType === 'student' 
+        ? ['students_login', 'Students_login', 'students', 'Students']
+        : ['hr_login', 'HR_login', 'hr', 'HR'];
 
-// Function to observe YouTube player visibility
-function observeYouTubePlayer(playerId) {
-    const container = document.getElementById(playerId + '-container');
-    if (!container) return;
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const player = window.youtubePlayers[playerId];
-            if (!player) return;
-            
-            if (entry.isIntersecting) {
-                // Video is visible, enable it
-                console.log('YouTube video visible');
-                // We don't auto-play, just make sure it's enabled
-            } else {
-                // Video is not visible, stop it
-                console.log('YouTube video not visible, stopping');
-                try {
-                    player.pauseVideo();
-                    // Optional: you can also stop and reset the video completely
-                    // player.stopVideo();
-                } catch (e) {
-                    console.error('Error stopping YouTube video:', e);
-                }
-            }
-        });
-    }, {
-        root: document.getElementById('feed'),
-        rootMargin: '0px',
-        threshold: 0.2 // Video will pause when less than 20% visible
-    });
-    
-    observer.observe(container);
-}
-
-// Add this new function to handle YouTube autoplay
-function setupYouTubeAutoplay(iframeElement, videoId) {
-    // Create a unique ID if not already present
-    if (!iframeElement.id) {
-        iframeElement.id = 'youtube-' + videoId + '-' + Math.random().toString(36).substr(2, 9);
-    }
-    
-    // Store the player reference in a global object
-    if (!window.youtubePlayers) {
-        window.youtubePlayers = {};
-    }
-    // Function to be called when the YouTube API is ready
-    const onYouTubeIframeAPIReady = () => {
-        window.youtubePlayers[iframeElement.id] = new YT.Player(iframeElement.id, {
-            events: {
-                'onReady': (event) => {
-                    // Player is ready, now set up the intersection observer
-                    const options = {
-                        root: document.getElementById('feed'),
-                        rootMargin: '50px 0px',
-                        threshold: 0.5
-                    };
-                    
-                    const observer = new IntersectionObserver((entries, observer) => {
-                        entries.forEach(entry => {
-                            const player = window.youtubePlayers[iframeElement.id];
-                            if (player && typeof player.getPlayerState === 'function') {
-                                if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-                                    // Only play if the video is not already playing
-                                    if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                                        player.playVideo();
-                                    }
-                                } else {
-                                    // Pause the video when out of view
-                                    if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                                        player.pauseVideo();
-                                    }
-                                }
-                            }
-                        });
-                    }, options);
-                    
-                    observer.observe(iframeElement.parentNode);
-                }
-            }
-        });
-    };
-    
-    // Check if YouTube API is already loaded
-    if (window.YT && window.YT.Player) {
-        onYouTubeIframeAPIReady();
-    } else {
-        // Add a callback to the window object for when API loads
-        window.onYouTubeIframeAPIReady = () => {
-            // Call for all pending iframes
-            Object.keys(window.youtubePlayers).forEach(id => {
-                if (!window.youtubePlayers[id] || typeof window.youtubePlayers[id].getPlayerState !== 'function') {
-                    onYouTubeIframeAPIReady();
-                }
-            });
-        };
-    }
-}
-
-
-// Modify videoAutoplay to use lower quality settings and less aggressive preloading
-function setupVideoAutoplay(videoElement) {
-    videoElement.preload = 'metadata';
-    
-    const options = {
-        root: document.getElementById('feed'),
-        rootMargin: '50px 0px', // Reduced from 200px
-        threshold: 0.5 // Reduced from 0.70
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-                videoElement.preload = 'auto';
-                videoElement.currentTime = 0;
-                videoElement.play().catch(error => {
-                    console.warn('Autoplay failed:', error);
-                });
-            } else {
-                videoElement.pause();
-                videoElement.currentTime = 0;
-                videoElement.preload = 'none';
-            }
-        });
-    }, options);
-
-    observer.observe(videoElement);
-}
-
-// Modify GIF autoplay to be less aggressive
-function setupGifAutoplay(gifElement) {
-    gifElement.loading = 'lazy';
-    gifElement.decoding = 'async';
-    
-    const originalSrc = gifElement.src;
-    const options = {
-        root: document.getElementById('feed'),
-        rootMargin: '50px 0px', // Reduced from 200px
-        threshold: 0.1
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                gifElement.src = originalSrc;
-                gifElement.style.visibility = 'visible';
-            } else {
-                gifElement.style.visibility = 'hidden';
-            }
-        });
-    }, options);
-
-    observer.observe(gifElement);
-}
-
-
-
-
-// Create MCQ element
-function createMCQElement(mcq) {
-    const mcqElement = document.createElement('div');
-    mcqElement.className = 'mcq-post';
-    mcqElement.dataset.mcqId = mcq.id;
-    
-    // Handle options safely
-    let options = mcq.options;
-    if (typeof options === 'string') {
+    for (const tableName of tableNames) {
         try {
-            options = JSON.parse(options);
-        } catch (e) {
-            console.error('Error parsing MCQ options:', e);
-            options = [
-                { text: "Option A", isCorrect: false },
-                { text: "Option B", isCorrect: true }
-            ];
+            const { data, error } = await supabase
+                .from(tableName)
+                .select('email')
+                .eq('email', email)
+                .limit(1);    
+            
+            if (!error && data && data.length > 0) {
+                return true;
+            }
+        } catch (err) {
+            console.log(`Error checking ${tableName}:`, err);
         }
     }
+    return false;
+}
+
+// Registration form handler
+document.getElementById('registration-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
     
-    // Fallback for malformed options
-    if (!Array.isArray(options) || options.length === 0) {
-        options = [
-            { text: "Option A", isCorrect: false },
-            { text: "Option B", isCorrect: true }
-        ];
+    const form = this;
+    const submitBtn = form.querySelector('.submit-btn');
+    const originalText = submitBtn.textContent;
+    
+    form.classList.add('loading');
+    submitBtn.textContent = 'Creating Account...';
+    
+    const userType = document.getElementById('reg-user-type').value;
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    const whatsapp = document.getElementById('reg-whatsapp').value;
+    const company = document.getElementById('reg-company').value;
+    
+    try {
+        // Check if email already exists
+        const emailExists = await checkEmailExists(email, userType);
+        if (emailExists) {
+            showNotification('Email already exists! Please use a different email or login.', 'error');
+            form.classList.remove('loading');
+            submitBtn.textContent = originalText;
+            return;
+        }
+
+        let registrationData = {
+            name: name,
+            email: email,
+            password: password
+        };
+        
+        if (userType === 'student') {
+            registrationData.whatsapp_number = whatsapp;
+        } else {
+            registrationData.company_name = company;
+        }
+        
+        const tableNames = userType === 'student' 
+            ? ['students_login', 'Students_login', 'students', 'Students']
+            : ['hr_login', 'HR_login', 'hr', 'HR'];
+        
+        let registered = false;
+        for (const tableName of tableNames) {
+            try {
+                const { data, error } = await supabase
+                    .from(tableName)
+                    .insert([registrationData])
+                    .select();
+                
+                if (!error && data && data.length > 0) {
+                    showNotification(`Welcome to JobCenter, ${name}! Registration successful! Please login to continue.`, 'success');
+                    
+                    // Clear form
+                    form.reset();
+                    
+                    // Switch to login page after successful registration
+                    setTimeout(() => {
+                        switchToLogin();
+                        // Pre-fill login form with registered email
+                        document.getElementById('login-email').value = email;
+                        document.getElementById('login-user-type').value = userType;
+                    }, 2000);
+                    
+                    registered = true;
+                    break;
+                }
+            } catch (err) {
+                console.log(`Error with ${tableName}:`, err);
+            }
+        }
+        
+        if (!registered) {
+            showNotification('Registration failed. Please try again.', 'error');
+        }
+        
+    } catch (error) {
+        showNotification('Registration error: ' + error.message, 'error');
     }
     
-    mcqElement.innerHTML = `
-        <div class="mcq-question">${mcq.question || 'Question not available'}</div>
-        <div class="mcq-options">
-            ${options.map((option, index) => `
-                <button class="mcq-option" data-index="${index}">
-                    ${String.fromCharCode(65 + index)}. ${option.text}
-                </button>
-            `).join('')}
-        </div>
-        <div class="mcq-feedback"></div>
-    `;
-    
-    // Add event listeners for MCQ options
-    const optionButtons = mcqElement.querySelectorAll('.mcq-option');
-    const feedbackDiv = mcqElement.querySelector('.mcq-feedback');
-    
-    optionButtons.forEach((option) => {
-        option.addEventListener('click', () => {
-            if (mcqElement.classList.contains('answered')) return;
-            
-            const selectedIndex = parseInt(option.dataset.index);
-            const isCorrect = options[selectedIndex].isCorrect;
-            
-            optionButtons.forEach(opt => opt.classList.remove('correct', 'incorrect', 'selected'));
-            option.classList.add(isCorrect ? 'correct' : 'incorrect', 'selected');
-            
-            feedbackDiv.innerHTML = `
-                <div class="feedback-${isCorrect ? 'correct' : 'incorrect'}">
-                    ${isCorrect ? 
-                        `✓ Correct! ${mcq.explanation || ''}` : 
-                        `✗ Incorrect. The correct answer is ${options.find(opt => opt.isCorrect)?.text || 'Not available'}. ${mcq.explanation || ''}`}
-                </div>
-            `;
-            
-            mcqElement.classList.add('answered');
-        });
-    });
-    
-    return mcqElement;
-}
-
-// Add CSS styles
-function addStyles() {
-    const styles = `
-
-    .offline-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 50vh;
-    text-align: center;
-    padding: 20px;
-}
-
-.offline-image {
-    max-width: 200px;
-    margin-bottom: 20px;
-}
-
-.loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    width: 100%;
-}
-
-.loading-gif {
-    width: 80px;
-    height: 80px;
-}
-.video-wrapper {
-    position: relative;
-    width: 100%;
-    padding-bottom: 177.78%; /* This creates a 9:16 aspect ratio (vertical) */
-    height: 0;
-    overflow: hidden;
-    max-height: 80vh; /* Limit maximum height */
-    border-radius: 8px;
-}
-
-.video-wrapper video,
-.video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* This ensures the video stays in proper ratio */
-}
-
-    .youtube-container {
-    aspect-ratio: 16/9;
-    width: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 10px 0;
-    pointer-events: auto !important; /* Force pointer events to be enabled */
-}
-
-.youtube-container iframe {
-    border-radius: 8px;
-    pointer-events: auto !important; /* Ensure iframe can receive clicks */
-}
-
-
-
-/* Add this to your CSS */
-.refresh-spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ccc;
-    border-top-color: #333;
-    border-radius: 50%;
-    margin-right: 10px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-
-
-
-
-
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.display-name {
-    font-weight: bold;
-    font-size: 1em;
-    margin-bottom: 2px;
-    text-align: left;
-}
-
-.username {
-    font-size: 0.85em;
-    color: gray;
-}
-
-.text-post {
-    font-size: 1em;
-    margin-top: 8px;
-    margin-bottom: 6px;
-}
-.tweet-footer-time {
-    font-size: 0.8em;
-    color: gray;
-    margin-top: 4px;
-    text-align: left;
-}
-
-/* Zoomable DP Modal */
-.dp-modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
-    justify-content: center;
-    align-items: center;
-}
-
-.dp-modal-inner {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    max-width: 90vw;
-    max-height: 90vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.dp-modal-content {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #000;
-}
-
-.dp-close {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    font-size: 28px;
-    color: white;
-    background: black;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    line-height: 30px;
-    text-align: center;
-    cursor: pointer;
-    z-index: 10000;
-}
-
-
-
-
-
-
-
-  
-
-    .post-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.profile-pic {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 12px;
-    object-fit: cover;
-}
-
-.profile-pic-placeholder {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 12px;
-    background-color: #e1e8ed;
-}
-
-.post-heading {
-    font-weight: bold;
-    font-size: 1.1em;
-}
-
-    .pinned-post {
-    border-left: 3px solid #1da1f2;
-    background-color: rgba(29,161,242,0.05);
-}
-
-.pinned-indicator {
-    display: flex;
-    align-items: center;
-    color: #1da1f2;
-    font-size: 0.8em;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.pinned-indicator svg {
-    margin-right: 4px;
-}
-      .loading-message {
-        padding: 20px;
-        text-align: center;
-        color: #888;
-      }
-      .error-message {
-        padding: 20px;
-        text-align: center;
-        color: #f44336;
-      }
-      
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', system-ui, sans-serif;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        tap-highlight-color: rgba(0, 0, 0, 0);
-        outline: none;
-        touch-action: manipulation;
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-touch-callout: none;
-      }
-
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: black;
-        color: #fff;
-        line-height: 1.6;
-      }
-      
-      .container {
-        width: 97vw;
-        max-width: 375px;
-        height: 97vh;
-        max-height: 770px;
-        margin: 0 auto;
-        background-color: #000000;
-        margin-bottom: 0;
-        overflow-y: auto;
-        position: relative;
-        scrollbar-width: none;
-        display: flex;
-        flex-direction: column;
-        overflow-x: hidden;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .container::-webkit-scrollbar {
-        display: none;
-      }
-      
-      @media (min-width: 768px) {
-        .container {
-          width: 50vw;
-          height: 80vh;
-        }
-      }
-      
-      .post {
-        padding: 16px;
-        margin-bottom: 12px;
-        background-color: #000000;
-        color: #ffffff;
-        box-shadow: inset 0 -0.2px 0 rgba(230, 230, 230, 0.5);
-        position: relative;
-      }
-      
-      .post-header {
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-      }
-      
-      .post-heading {
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 1.25;
-        color: #ffffff;
-        margin: 0;
-        padding: 0;
-        letter-spacing: 0.5px;
-        text-align: left;
-      }
-      
-      .text-post {
-        font-size: 15px;
-        line-height: 1.5;
-        color: #ffffff;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        margin: 0;
-        padding: 0;
-        font-weight: 350;
-        text-align: left;
-      }
-      
-      .caption {
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 1.25;
-        color: #ffffff;
-        margin: 0;
-        padding: 0;
-        letter-spacing: 0.5px;
-        text-align: left;
-      }
-      
-      .media-container {
-        margin: 12px 0;
-        overflow: hidden;
-        background-color: #1c1c1c;
-      }
-      
-      .media-container img,
-      .media-container video {
-        width: 100%;
-        height: auto;
-        display: block;
-        cursor: pointer;
-      }
-      
-      .timestamp {
-        font-size: 12px;
-        color: #7a7a7a;
-        text-align: right;
-        margin-top: 8px;
-      }
-      
-      .mcq-post {
-        background: #000;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      }
-      
-      .mcq-question {
-        font-size: 16px;
-        color: #fff;
-        margin-bottom: 20px;
-        line-height: 1.5;
-        font-weight: 500;
-      }
-      
-      .mcq-options {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      
-      .mcq-option {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #333;
-        background: transparent;
-        color: #fff;
-        border-radius: 8px;
-        text-align: left;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        outline: none;
-      }
-      
-      .mcq-option.correct {
-        background: #1b4d1b;
-        border-color: #2e7d32;
-      }
-      
-      .mcq-option.incorrect {
-        background: #4d1b1b;
-        border-color: #7d2e2e;
-      }
-      
-      .mcq-feedback {
-        margin-top: 16px;
-        padding: 12px;
-        border-radius: 6px;
-        font-size: 14px;
-        line-height: 1.4;
-      }
-      
-      .feedback-correct {
-        background: #1b4d1b;
-        color: #fff;
-        padding: 12px;
-        border-radius: 6px;
-      }
-      
-      .feedback-incorrect {
-        background: #4d1b1b;
-        color: #fff;
-        padding: 12px;
-        border-radius: 6px;
-      }
-      
-      .mcq-post.answered .mcq-option:not(.selected) {
-        opacity: 0.7;
-      }
-      
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.9);
-        z-index: 1000;
-        cursor: pointer;
-      }
-      
-      .modal-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        max-width: 90%;
-        max-height: 90vh;
-      }
-      
-      .back-to-top {
-        position: fixed;
-        bottom: 70px;
-        right: 20px;
-        background: linear-gradient(45deg, #4CAF50, #45a049);
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        border: none;
-        font-size: 34px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-      
-      .back-to-top.visible {
-        opacity: 1;
-        display: flex;
-      }
-      
-      .post-loading {
-        opacity: 0;
-        animation: fadeIn 0.3s ease forwards;
-      }
-      
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      
-      .gif-overlay {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.7);
-        padding: 4px 8px;
-        border-radius: 4px;
-        z-index: 1;
-      }
-      
-      .gif-indicator {
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-      }
-      
-      .header {
-        position: fixed;
-        top: 5px;
-        background-color: #000000;
-        padding: 22px;
-        z-index: 1000;
-        text-align: center;
-        width: 100%;
-        transition: all 0.6s ease-in-out;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 20px;
-        font-size: 12px;
-      }
-      
-      .header.hidden {
-        transform: translateY(-100%);
-        opacity: 0;
-        pointer-events: none;
-        height: 0;
-      }
-      
-      .header h1 {
-        color: #4CAF50;
-        margin: 0;
-        font-size: 22px;
-        margin-right: 10px;
-      }
-      
-      .header p {
-        color: #ffffff;
-      }
-      
-      .feed {
-        flex: 1;
-        overflow-y: auto;
-        padding: 8px;
-        transition: margin-top 0.6s ease-in-out;
-        overflow-x: hidden;
-      }
-      
-      .feed.expand-top {
-        margin-top: 0;
-      }
-      
-      #feed.shift-up {
-        transform: translateY(-50px);
-      }
-      
-      .loading-container {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        text-align: center;
-        padding: 10px;
-        background-color: #000000;
-        z-index: 9;
-      }
-      
-      .loading-circle {
-        width: 40px;
-        height: 40px;
-        margin: 0 auto;
-        border: 3px solid #4CAF50;
-        border-radius: 50%;
-        border-top-color: transparent;
-        animation: spin 1s linear infinite;
-      }
-      
-      .loading-text {
-        margin-top: 8px;
-        color: #4CAF50;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      .post-bottom-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-      }
-      
-      .save-icon {
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        user-select: none;
-        color: #888;
-        transition: color 0.3s;
-      }
-      
-      .save-icon.saved {
-        color: #4CAF50;
-      }
-      
-      .save-icon.saved svg {
-        fill: #4CAF50;
-        stroke: #4CAF50;
-      }
-      
-      .refresh-indicator {
-        text-align: center;
-        padding: 10px;
-        color: #4CAF50;
-        display: none;
-      }
-      
-      .end-message {
-        background-color: #4CAF50;
-        color: white;
-        font-size: 18px;
-        padding: 10px;
-        border-radius: 5px;
-        text-align: center;
-        margin-top: 20px;
-      }
-    `;
-
-    
-    const styleElement = document.createElement('style');
-    styleElement.textContent = styles;
-    document.head.appendChild(styleElement);
-}
-
-// Initialize the app when the document is ready
-document.addEventListener('DOMContentLoaded', () => {
-    addStyles();
-    initApp();
+    form.classList.remove('loading');
+    submitBtn.textContent = originalText;
 });
-</script>
+
+// Login form handler
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const submitBtn = form.querySelector('.submit-btn');
+    const originalText = submitBtn.textContent;
+    
+    form.classList.add('loading');
+    submitBtn.textContent = 'Logging In...';
+    
+    const userType = document.getElementById('login-user-type').value;
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    
+    try {
+        const tableNames = userType === 'student' 
+            ? ['students_login', 'Students_login', 'students', 'Students']
+            : ['hr_login', 'HR_login', 'hr', 'HR'];
+        
+        let loginSuccessful = false;
+        for (const tableName of tableNames) {
+            try {
+                const { data, error } = await supabase
+                    .from(tableName)
+                    .select('*')
+                    .eq('email', email)
+                    .eq('password', password)
+                    .limit(1);
+                
+                if (!error && data && data.length > 0) {
+                    showNotification(`Welcome back, ${data[0].name}!`, 'success');
+                    
+                    // Set session and redirect
+                    setUserSession(userType, data[0]);
+                    
+                    setTimeout(() => {
+                        if (userType === 'student') {
+                            window.location.replace('students.html');
+                        } else {
+                            window.location.replace('hr.html');
+                        }
+                    }, 1500);
+                    
+                    loginSuccessful = true;
+                    break;
+                }
+            } catch (err) {
+                console.log(`Error with ${tableName}:`, err);
+            }
+        }
+        
+        if (!loginSuccessful) {
+            showNotification('Invalid email or password. Please try again.', 'error');
+        }
+        
+    } catch (error) {
+        showNotification('Login error: ' + error.message, 'error');
+    }
+    
+    form.classList.remove('loading');
+    submitBtn.textContent = originalText;
+});
+
+// Handle user type change for registration
+document.getElementById('reg-user-type').addEventListener('change', function() {
+    const studentFields = document.getElementById('reg-student-fields');
+    const hrFields = document.getElementById('reg-hr-fields');
+    
+    if (this.value === 'student') {
+        studentFields.classList.remove('hidden');
+        hrFields.classList.add('hidden');
+    } else {
+        studentFields.classList.add('hidden');
+        hrFields.classList.remove('hidden');
+    }
+});
+
+// Initialize page - Check session immediately when DOM loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if user is already logged in before showing anything
+    if (!checkUserSession()) {
+        // Only show the auth page if no session exists
+        document.body.classList.add('loaded');
+    }
+});
+
+// Also check on window load as backup
+window.addEventListener('load', function() {
+    // Double check session in case DOMContentLoaded didn't fire properly
+    if (!checkUserSession()) {
+        document.body.classList.add('loaded');
+    }
+});
+
+// Expose logout function globally for use in other pages
+window.jobCenterLogout = function() {
+    clearUserSession();
+    window.location.replace(window.location.pathname.split('/').pop() || 'index.html');
+};
+    </script>
 </body>
 </html>
