@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JobCenter Authentication</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Mobile Camera</title>
     <style>
         * {
             margin: 0;
@@ -13,725 +12,696 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            max-width: 375px;
+            max-height: 770px;
+            margin: 0 auto;
+        }
+
+        #container {
+            width: 100%;
+            height: 100vh;
+            max-width: 375px;
+            max-height: 770px;
+            overflow-y: auto;
+            background: #000;
+            position: relative;
+        }
+
+        /* Camera View */
+        #camera-view {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        body::before {
-            content: '';
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .camera-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(0, 255, 135, 0.05) 0%, transparent 50%);
-            animation: pulse 8s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.3; }
-            100% { opacity: 0.6; }
-        }
-
-        body.loaded {
-            opacity: 1;
-        }
-
-        .container {
-            width: 100vw;
-            max-width: 375px;
-            height: 100vh;
-            max-height: 770px;
-            margin: 0 auto;
-            background: transparent;  /* Instead of the gradient */
-    backdrop-filter: none;    /* Remove blur effect */
-    border: none;            /* Remove border */
-    box-shadow: none;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            overflow-y: auto;
-            position: relative;
-            padding: 20px;
-            border-radius: 0;
-        }
-
-        .switch-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 150, 255, 0.3) 100%);
-            color: #00e5ff;
-            border: 1px solid rgba(0, 229, 255, 0.3);
-            padding: 5px 7px;
-            border-radius: 8px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            backdrop-filter: blur(10px);
-            z-index: 10;
-        }
-
-        .switch-btn::before {
-            content: '⇄';
-            font-size: 1rem;
-            font-weight: bold;
-        }
-
-        .switch-btn:hover {
-            background: linear-gradient(135deg, rgba(0, 229, 255, 0.3) 0%, rgba(0, 150, 255, 0.4) 100%);
-            border-color: rgba(0, 229, 255, 0.5);
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
-            transform: translateY(-1px);
-        }
-
-        .header {
-            text-align: center;
-            margin: 60px 0 40px 0;
-        }
-
-        .title {
-            color: #ffffff;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-shadow: none;
-            background: linear-gradient(135deg, #ffffff 0%, #00e5ff 50%, #ffffff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-        }
-
-        .form-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 16px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-            backdrop-filter: blur(10px);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #00e5ff;
-            background: rgba(0, 229, 255, 0.1);
-            box-shadow: 
-                0 0 0 2px rgba(0, 229, 255, 0.2),
-                0 0 20px rgba(0, 229, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        select {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2300e5ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 16px center;
-            background-repeat: no-repeat;
-            background-size: 16px;
-            padding-right: 50px;
-        }
-
-        select option {
-            background: #1a1a2e;
-            color: #ffffff;
-        }
-
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #00e5ff 0%, #0066cc 100%);
-            color: #000000;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.6s;
-        }
-
-        .submit-btn:hover::before {
-            left: 100%;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 10px 30px rgba(0, 229, 255, 0.4),
-                0 0 20px rgba(0, 229, 255, 0.6);
-        }
-
-        .submit-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .field-group {
-            transition: all 0.4s ease;
-        }
-
-        .field-group.hidden {
-            display: none;
-        }
-
-        .page {
-            display: none;
-            flex: 1;
-            flex-direction: column;
-        }
-
-        .page.active {
-            display: flex;
-        }
-
-        /* Loading animation */
-        .loading {
-            opacity: 0.7;
             pointer-events: none;
+            z-index: 2;
         }
 
-        .loading .submit-btn {
-            background: linear-gradient(135deg, #666666 0%, #444444 100%);
+        .focus-frame {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: focusPulse 2s infinite;
         }
 
-        /* Notification styles */
-        .notification {
-            position: fixed;
+        @keyframes focusPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .camera-info {
+            position: absolute;
             top: 20px;
             left: 20px;
             right: 20px;
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            z-index: 1000;
-            transform: translateY(-100px);
-            transition: all 0.4s ease;
-            backdrop-filter: blur(20px);
-            border: 1px solid;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
         }
 
-        .notification.show {
-            transform: translateY(0);
+        /* Camera Controls */
+        .camera-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 50%);
+            padding: 30px 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 5;
         }
 
-        .notification.success {
-            background: linear-gradient(135deg, rgba(0, 255, 135, 0.2) 0%, rgba(0, 200, 100, 0.3) 100%);
-            color: #00ff87;
-            border-color: rgba(0, 255, 135, 0.3);
+        .capture-btn {
+            width: 70px;
+            height: 70px;
+            border: 4px solid white;
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            touch-action: manipulation;
+            transition: all 0.2s ease;
         }
 
-        .notification.error {
-            background: linear-gradient(135deg, rgba(255, 0, 100, 0.2) 0%, rgba(200, 0, 80, 0.3) 100%);
-            color: #ff0064;
-            border-color: rgba(255, 0, 100, 0.3);
+        .capture-btn:active {
+            transform: scale(0.9);
         }
 
-        .notification.info {
-            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 150, 255, 0.3) 100%);
-            color: #00e5ff;
-            border-color: rgba(0, 229, 255, 0.3);
+        .capture-btn::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.2s ease;
         }
 
-       
-
-        /* Mobile optimizations */
-        @media (max-width: 375px) {
-            .container {
-                padding: 16px;
-            }
-            
-            .title {
-                font-size: 2.2rem;
-            }
-
-            .switch-btn {
-                top: 16px;
-                right: 16px;
-                padding: 8px 12px;
-                font-size: 0.75rem;
-            }
-
-            .header {
-                margin: 50px 0 30px 0;
-            }
+        .capture-btn:active::before {
+            background: #00ff88;
         }
 
-
-        * {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Disable highlight on Android Chrome/WebView */
-    tap-highlight-color: rgba(0, 0, 0, 0);        /* Disable highlight on other Android browsers */
-    outline: none;                                /* Remove outline for better UI */
-    touch-action: manipulation;                  /* Optimize touch behavior */
-    -webkit-user-select: none;                   /* Prevent selection */
-    user-select: none;                           /* Prevent selection for other browsers */
-    -webkit-touch-callout: none;                 /* Disable callout menu on long press */
-}
-
-        /* Scrollbar styling */
-        /* .container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .container::-webkit-scrollbar-track {
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
         }
 
-        .container::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #00e5ff 0%, #0066cc 100%);
-            border-radius: 2px; 
-        }*/
+        .control-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Bottom Panel */
+        .bottom-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 40vh;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            margin-top: -20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .photo-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn.primary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+        }
+
+        .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+        }
+
+        .photo-item:active img {
+            transform: scale(1.1);
+        }
+
+        .photo-item .delete-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 59, 48, 0.9);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        .empty-gallery {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .empty-gallery .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Status Messages */
+        .status-msg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-msg.show {
+            opacity: 1;
+        }
+
+        /* Flash Effect */
+        .flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .flash.active {
+            opacity: 1;
+            animation: flashEffect 0.2s ease;
+        }
+
+        @keyframes flashEffect {
+            0% { opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+
+        /* Fullscreen Photo View */
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .fullscreen-photo {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+        }
+
+        .fullscreen-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        /* Responsive adjustments */
+        @media (max-height: 600px) {
+            #camera-view {
+                height: 50vh;
+            }
+            .bottom-panel {
+                min-height: 50vh;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Registration Page -->
-        <div id="register-page" class="page active">
-            <button class="switch-btn" onclick="switchToLogin()">Switch to Login</button>
+    <div id="container">
+        <!-- Camera View -->
+        <div id="camera-view">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
             
-            <div class="header">
-                <h1 class="title">JobCenter</h1>
-                <p class="subtitle">Registration Portal</p>
+            <div class="camera-overlay">
+                <div class="focus-frame"></div>
+                <div class="camera-info" id="camera-info">
+                    Tap the capture button to take photos
+                </div>
             </div>
-            
-            <div class="form-container">
-                <form id="registration-form">
-                    <div class="form-group">
-                        <label for="reg-user-type">Registration Type</label>
-                        <select id="reg-user-type" required>
-                            <option value="student">Student</option>
-                            <option value="hr">HR Professional</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reg-name">Full Name</label>
-                        <input type="text" id="reg-name" placeholder="Enter your full name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reg-email">Email Address</label>
-                        <input type="email" id="reg-email" placeholder="Enter your email address" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reg-password">Password</label>
-                        <input type="password" id="reg-password" placeholder="Create a secure password" required>
-                    </div>
-                    
-                    <div id="reg-student-fields" class="field-group">
-                        <div class="form-group">
-                            <label for="reg-whatsapp">WhatsApp Number</label>
-                            <input type="text" id="reg-whatsapp" placeholder="Enter your WhatsApp number">
-                        </div>
-                    </div>
-                    
-                    <div id="reg-hr-fields" class="field-group hidden">
-                        <div class="form-group">
-                            <label for="reg-company">Company Name</label>
-                            <input type="text" id="reg-company" placeholder="Enter your company name">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Create Account</button>
-                </form>
+
+            <div class="camera-controls">
+                <button class="control-btn" id="switchBtn" title="Switch Camera">
+                    🔄
+                </button>
+                
+                <button class="capture-btn" id="captureBtn"></button>
+                
+                <button class="control-btn" id="flashBtn" title="Toggle Flash">
+                    ⚡
+                </button>
             </div>
         </div>
 
-        <!-- Login Page -->
-        <div id="login-page" class="page">
-            <button class="switch-btn" onclick="switchToRegister()">Switch to Register</button>
-            
-            <div class="header">
-                <h1 class="title">JobCenter</h1>
-                <p class="subtitle">Login Portal</p>
+        <!-- Bottom Panel -->
+        <div class="bottom-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Photo Gallery</h2>
+                <span class="photo-count" id="photoCount">0 photos</span>
             </div>
-            
-            <div class="form-container">
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="login-user-type">Login Type</label>
-                        <select id="login-user-type" required>
-                            <option value="student">Student</option>
-                            <option value="hr">HR Professional</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="login-email">Email Address</label>
-                        <input type="email" id="login-email" placeholder="Enter your email address" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="login-password">Password</label>
-                        <input type="password" id="login-password" placeholder="Enter your password" required>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Login</button>
-                </form>
+
+            <div class="action-buttons">
+                <button class="action-btn primary" id="startBtn">
+                    📷 Start Camera
+                </button>
+                <button class="action-btn secondary" id="clearBtn">
+                    🗑️ Clear All
+                </button>
+            </div>
+
+            <div class="photo-gallery" id="photoGallery">
+                <div class="empty-gallery">
+                    <div class="icon">📸</div>
+                    <p>No photos yet.<br>Start camera and capture moments!</p>
+                </div>
             </div>
         </div>
     </div>
 
-<script>
-        // INDEX.HTML JS
-        // Your database credentials
-const SUPABASE_URL = 'https://hyrdvlqgtkxtabpamdmc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5cmR2bHFndGt4dGFicGFtZG1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwMDM0NjYsImV4cCI6MjA2MzU3OTQ2Nn0.UVO41KHOPQATqNJy5VnHaEaeGER3vXp0pqYqwigt5rE';
+    <!-- Status Message -->
+    <div class="status-msg" id="statusMsg"></div>
 
-// Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- Flash Effect -->
+    <div class="flash" id="flash"></div>
 
-// Session management using localStorage for persistence
-function setUserSession(userType, userData) {
-    localStorage.setItem('jobcenter_user_type', userType);
-    localStorage.setItem('jobcenter_user_data', JSON.stringify(userData));
-}
+    <!-- Fullscreen Photo View -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <img class="fullscreen-photo" id="fullscreenPhoto" alt="Full size photo">
+        <button class="fullscreen-close" id="fullscreenClose">×</button>
+    </div>
 
-function getUserSession() {
-    const userType = localStorage.getItem('jobcenter_user_type');
-    const userData = localStorage.getItem('jobcenter_user_data');
-    return {
-        userType: userType,
-        userData: userData ? JSON.parse(userData) : null
-    };
-}
-
-function clearUserSession() {
-    localStorage.removeItem('jobcenter_user_type');
-    localStorage.removeItem('jobcenter_user_data');
-}
-
-// Check session on page load and redirect immediately to prevent flicker
-// In index.html, modify the checkUserSession function:
-function checkUserSession() {
-    const session = getUserSession();
-    if (session.userType && session.userData) {
-        // NEW: Hide body immediately to prevent blink
-        document.body.style.display = 'none';
-        
-        // Redirect immediately without showing auth page
-        if (session.userType === 'student') {
-            window.location.replace('students.html');
-        } else if (session.userType === 'hr') {
-            window.location.replace('hr.html');
-        }
-        return true;
-    }
-    return false;
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existing = document.querySelector('.notification');
-    if (existing) {
-        existing.remove();
-    }
-
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    // Trigger animation
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 100);
-
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 4000);
-}
-
-// Page switching functions
-function switchToLogin() {
-    document.getElementById('register-page').classList.remove('active');
-    document.getElementById('login-page').classList.add('active');
-}
-
-function switchToRegister() {
-    document.getElementById('login-page').classList.remove('active');
-    document.getElementById('register-page').classList.add('active');
-}
-
-// Check if email exists
-async function checkEmailExists(email, userType) {
-    const tableNames = userType === 'student' 
-        ? ['students_login', 'Students_login', 'students', 'Students']
-        : ['hr_login', 'HR_login', 'hr', 'HR'];
-
-    for (const tableName of tableNames) {
-        try {
-            const { data, error } = await supabase
-                .from(tableName)
-                .select('email')
-                .eq('email', email)
-                .limit(1);    
-            
-            if (!error && data && data.length > 0) {
-                return true;
-            }
-        } catch (err) {
-            console.log(`Error checking ${tableName}:`, err);
-        }
-    }
-    return false;
-}
-
-// Registration form handler
-document.getElementById('registration-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const form = this;
-    const submitBtn = form.querySelector('.submit-btn');
-    const originalText = submitBtn.textContent;
-    
-    form.classList.add('loading');
-    submitBtn.textContent = 'Creating Account...';
-    
-    const userType = document.getElementById('reg-user-type').value;
-    const name = document.getElementById('reg-name').value;
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    const whatsapp = document.getElementById('reg-whatsapp').value;
-    const company = document.getElementById('reg-company').value;
-    
-    try {
-        // Check if email already exists
-        const emailExists = await checkEmailExists(email, userType);
-        if (emailExists) {
-            showNotification('Email already exists! Please use a different email or login.', 'error');
-            form.classList.remove('loading');
-            submitBtn.textContent = originalText;
-            return;
-        }
-
-        let registrationData = {
-            name: name,
-            email: email,
-            password: password
-        };
-        
-        if (userType === 'student') {
-            registrationData.whatsapp_number = whatsapp;
-        } else {
-            registrationData.company_name = company;
-        }
-        
-        const tableNames = userType === 'student' 
-            ? ['students_login', 'Students_login', 'students', 'Students']
-            : ['hr_login', 'HR_login', 'hr', 'HR'];
-        
-        let registered = false;
-        for (const tableName of tableNames) {
-            try {
-                const { data, error } = await supabase
-                    .from(tableName)
-                    .insert([registrationData])
-                    .select();
+    <script>
+        class MobileCameraApp {
+            constructor() {
+                this.video = document.getElementById('video');
+                this.canvas = document.getElementById('canvas');
+                this.ctx = this.canvas.getContext('2d');
                 
-                if (!error && data && data.length > 0) {
-                    showNotification(`Welcome to JobCenter, ${name}! Registration successful! Please login to continue.`, 'success');
-                    
-                    // Clear form
-                    form.reset();
-                    
-                    // Switch to login page after successful registration
-                    setTimeout(() => {
-                        switchToLogin();
-                        // Pre-fill login form with registered email
-                        document.getElementById('login-email').value = email;
-                        document.getElementById('login-user-type').value = userType;
-                    }, 2000);
-                    
-                    registered = true;
-                    break;
+                // Store photos in memory during session
+                // Note: In a real app with localStorage, you would use:
+                // this.photos = JSON.parse(localStorage.getItem('cameraPhotos') || '[]');
+                this.photos = [];
+                
+                this.isRunning = false;
+                this.currentFacingMode = 'environment';
+                this.flashEnabled = false;
+                
+                this.setupEventListeners();
+                this.updatePhotoCount();
+                this.renderGallery();
+            }
+
+            setupEventListeners() {
+                document.getElementById('startBtn').addEventListener('click', () => this.toggleCamera());
+                document.getElementById('captureBtn').addEventListener('click', () => this.capturePhoto());
+                document.getElementById('switchBtn').addEventListener('click', () => this.switchCamera());
+                document.getElementById('flashBtn').addEventListener('click', () => this.toggleFlash());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearAllPhotos());
+                document.getElementById('fullscreenClose').addEventListener('click', () => this.closeFullscreen());
+
+                // Touch events for mobile optimization
+                document.addEventListener('touchstart', this.handleTouch.bind(this), { passive: false });
+                
+                // Prevent zoom on double tap
+                document.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                }, { passive: false });
+            }
+
+            handleTouch(event) {
+                // Prevent default zoom behavior
+                if (event.touches.length > 1) {
+                    event.preventDefault();
                 }
-            } catch (err) {
-                console.log(`Error with ${tableName}:`, err);
             }
-        }
-        
-        if (!registered) {
-            showNotification('Registration failed. Please try again.', 'error');
-        }
-        
-    } catch (error) {
-        showNotification('Registration error: ' + error.message, 'error');
-    }
-    
-    form.classList.remove('loading');
-    submitBtn.textContent = originalText;
-});
 
-// Login form handler
-document.getElementById('login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const form = this;
-    const submitBtn = form.querySelector('.submit-btn');
-    const originalText = submitBtn.textContent;
-    
-    form.classList.add('loading');
-    submitBtn.textContent = 'Logging In...';
-    
-    const userType = document.getElementById('login-user-type').value;
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    
-    try {
-        const tableNames = userType === 'student' 
-            ? ['students_login', 'Students_login', 'students', 'Students']
-            : ['hr_login', 'HR_login', 'hr', 'HR'];
-        
-        let loginSuccessful = false;
-        for (const tableName of tableNames) {
-            try {
-                const { data, error } = await supabase
-                    .from(tableName)
-                    .select('*')
-                    .eq('email', email)
-                    .eq('password', password)
-                    .limit(1);
-                
-                if (!error && data && data.length > 0) {
-                    showNotification(`Welcome back, ${data[0].name}!`, 'success');
+            async toggleCamera() {
+                if (!this.isRunning) {
+                    await this.startCamera();
+                } else {
+                    this.stopCamera();
+                }
+            }
+
+            async startCamera() {
+                try {
+                    this.showStatus('Starting camera...');
                     
-                    // Set session and redirect
-                    setUserSession(userType, data[0]);
-                    
-                    setTimeout(() => {
-                        if (userType === 'student') {
-                            window.location.replace('students.html');
-                        } else {
-                            window.location.replace('hr.html');
+                    const constraints = {
+                        video: {
+                            facingMode: this.currentFacingMode,
+                            width: { ideal: 375 },
+                            height: { ideal: 600 }
                         }
-                    }, 1500);
+                    };
+
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    this.video.srcObject = stream;
                     
-                    loginSuccessful = true;
-                    break;
+                    this.video.onloadedmetadata = () => {
+                        this.canvas.width = this.video.videoWidth;
+                        this.canvas.height = this.video.videoHeight;
+                        this.isRunning = true;
+                        
+                        document.getElementById('startBtn').innerHTML = '⏹️ Stop Camera';
+                        document.getElementById('camera-info').textContent = 'Camera ready - Tap to capture!';
+                        this.showStatus('Camera started successfully!');
+                    };
+                } catch (error) {
+                    console.error('Camera error:', error);
+                    this.showStatus('Camera access denied or unavailable');
+                    document.getElementById('camera-info').textContent = 'Camera access denied';
                 }
-            } catch (err) {
-                console.log(`Error with ${tableName}:`, err);
+            }
+
+            stopCamera() {
+                if (this.video.srcObject) {
+                    this.video.srcObject.getTracks().forEach(track => track.stop());
+                    this.video.srcObject = null;
+                }
+                this.isRunning = false;
+                document.getElementById('startBtn').innerHTML = '📷 Start Camera';
+                document.getElementById('camera-info').textContent = 'Camera stopped';
+                this.showStatus('Camera stopped');
+            }
+
+            async switchCamera() {
+                if (this.isRunning) {
+                    this.stopCamera();
+                    this.currentFacingMode = this.currentFacingMode === 'environment' ? 'user' : 'environment';
+                    setTimeout(() => this.startCamera(), 500);
+                    this.showStatus(`Switched to ${this.currentFacingMode === 'environment' ? 'back' : 'front'} camera`);
+                }
+            }
+
+            toggleFlash() {
+                this.flashEnabled = !this.flashEnabled;
+                const flashBtn = document.getElementById('flashBtn');
+                flashBtn.style.background = this.flashEnabled ? 
+                    'rgba(255, 255, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+                this.showStatus(`Flash ${this.flashEnabled ? 'enabled' : 'disabled'}`);
+            }
+
+            capturePhoto() {
+                if (!this.isRunning) {
+                    this.showStatus('Please start camera first');
+                    return;
+                }
+
+                // Flash effect
+                if (this.flashEnabled) {
+                    this.triggerFlash();
+                }
+
+                // Capture photo
+                this.ctx.drawImage(this.video, 0, 0);
+                const photoData = this.canvas.toDataURL('image/jpeg', 0.8);
+                
+                const photo = {
+                    id: Date.now(),
+                    data: photoData,
+                    timestamp: new Date().toLocaleString(),
+                    size: Math.round(photoData.length * 0.75 / 1024) // Approximate KB
+                };
+
+                this.photos.unshift(photo); // Add to beginning
+                
+                // In a real app with localStorage:
+                // localStorage.setItem('cameraPhotos', JSON.stringify(this.photos));
+                
+                this.updatePhotoCount();
+                this.renderGallery();
+                this.showStatus(`Photo captured! (${photo.size}KB)`);
+                
+                // Vibrate if supported
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            }
+
+            triggerFlash() {
+                const flash = document.getElementById('flash');
+                flash.classList.add('active');
+                setTimeout(() => flash.classList.remove('active'), 200);
+            }
+
+            deletePhoto(photoId) {
+                this.photos = this.photos.filter(photo => photo.id !== photoId);
+                
+                // In a real app with localStorage:
+                // localStorage.setItem('cameraPhotos', JSON.stringify(this.photos));
+                
+                this.updatePhotoCount();
+                this.renderGallery();
+                this.showStatus('Photo deleted');
+            }
+
+            clearAllPhotos() {
+                if (this.photos.length === 0) {
+                    this.showStatus('No photos to clear');
+                    return;
+                }
+
+                if (confirm(`Delete all ${this.photos.length} photos?`)) {
+                    this.photos = [];
+                    
+                    // In a real app with localStorage:
+                    // localStorage.removeItem('cameraPhotos');
+                    
+                    this.updatePhotoCount();
+                    this.renderGallery();
+                    this.showStatus('All photos cleared');
+                }
+            }
+
+            updatePhotoCount() {
+                const count = this.photos.length;
+                document.getElementById('photoCount').textContent = 
+                    `${count} photo${count !== 1 ? 's' : ''}`;
+            }
+
+            renderGallery() {
+                const gallery = document.getElementById('photoGallery');
+                
+                if (this.photos.length === 0) {
+                    gallery.innerHTML = `
+                        <div class="empty-gallery">
+                            <div class="icon">📸</div>
+                            <p>No photos yet.<br>Start camera and capture moments!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                gallery.innerHTML = this.photos.map(photo => `
+                    <div class="photo-item">
+                        <img src="${photo.data}" alt="Photo ${photo.id}" 
+                             onclick="cameraApp.showFullscreen('${photo.data}')">
+                        <button class="delete-btn" onclick="cameraApp.deletePhoto(${photo.id})" 
+                                title="Delete photo">×</button>
+                    </div>
+                `).join('');
+            }
+
+            showFullscreen(photoData) {
+                document.getElementById('fullscreenPhoto').src = photoData;
+                document.getElementById('fullscreenOverlay').style.display = 'flex';
+            }
+
+            closeFullscreen() {
+                document.getElementById('fullscreenOverlay').style.display = 'none';
+            }
+
+            showStatus(message) {
+                const statusMsg = document.getElementById('statusMsg');
+                statusMsg.textContent = message;
+                statusMsg.classList.add('show');
+                
+                setTimeout(() => {
+                    statusMsg.classList.remove('show');
+                }, 2000);
             }
         }
-        
-        if (!loginSuccessful) {
-            showNotification('Invalid email or password. Please try again.', 'error');
-        }
-        
-    } catch (error) {
-        showNotification('Login error: ' + error.message, 'error');
-    }
-    
-    form.classList.remove('loading');
-    submitBtn.textContent = originalText;
-});
 
-// Handle user type change for registration
-document.getElementById('reg-user-type').addEventListener('change', function() {
-    const studentFields = document.getElementById('reg-student-fields');
-    const hrFields = document.getElementById('reg-hr-fields');
-    
-    if (this.value === 'student') {
-        studentFields.classList.remove('hidden');
-        hrFields.classList.add('hidden');
-    } else {
-        studentFields.classList.add('hidden');
-        hrFields.classList.remove('hidden');
-    }
-});
+        // Initialize the app
+        let cameraApp;
+        window.addEventListener('load', () => {
+            cameraApp = new MobileCameraApp();
+        });
 
-// Initialize page - Check session immediately when DOM loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in before showing anything
-    if (!checkUserSession()) {
-        // Only show the auth page if no session exists
-        document.body.classList.add('loaded');
-    }
-});
+        // Prevent zoom and scroll issues
+        document.addEventListener('touchmove', function(event) {
+            if (event.scale !== 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
 
-// Also check on window load as backup
-window.addEventListener('load', function() {
-    // Double check session in case DOMContentLoaded didn't fire properly
-    if (!checkUserSession()) {
-        document.body.classList.add('loaded');
-    }
-});
-
-// Expose logout function globally for use in other pages
-window.jobCenterLogout = function() {
-    clearUserSession();
-    window.location.replace(window.location.pathname.split('/').pop() || 'index.html');
-};
+        // Handle orientation changes
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                if (cameraApp && cameraApp.isRunning) {
+                    cameraApp.canvas.width = cameraApp.video.videoWidth;
+                    cameraApp.canvas.height = cameraApp.video.videoHeight;
+                }
+            }, 500);
+        });
     </script>
 </body>
 </html>
