@@ -437,6 +437,7 @@
     </div>
 
 <script>
+        
         // INDEX.HTML JS
         // Your database credentials
 const SUPABASE_URL = 'https://hyrdvlqgtkxtabpamdmc.supabase.co';
@@ -491,17 +492,17 @@ function showNotification(message, type = 'info') {
     if (existing) {
         existing.remove();
     }
-
+    
     const notification = document.createElement('div');
-    notification.className = notification ${type};
+    notification.className = `notification ${type}`;
     notification.textContent = message;
     document.body.appendChild(notification);
-
+    
     // Trigger animation
     setTimeout(() => {
         notification.classList.add('show');
     }, 100);
-
+    
     // Auto remove after 4 seconds
     setTimeout(() => {
         notification.classList.remove('show');
@@ -527,7 +528,7 @@ async function checkEmailExists(email, userType) {
     const tableNames = userType === 'student' 
         ? ['students_login', 'Students_login', 'students', 'Students']
         : ['hr_login', 'HR_login', 'hr', 'HR'];
-
+        
     for (const tableName of tableNames) {
         try {
             const { data, error } = await supabase
@@ -540,7 +541,7 @@ async function checkEmailExists(email, userType) {
                 return true;
             }
         } catch (err) {
-            console.log(Error checking ${tableName}:, err);
+            console.log(`Error checking ${tableName}:`, err);
         }
     }
     return false;
@@ -573,7 +574,7 @@ document.getElementById('registration-form').addEventListener('submit', async fu
             submitBtn.textContent = originalText;
             return;
         }
-
+        
         let registrationData = {
             name: name,
             email: email,
@@ -599,7 +600,7 @@ document.getElementById('registration-form').addEventListener('submit', async fu
                     .select();
                 
                 if (!error && data && data.length > 0) {
-                    showNotification(Welcome to JobCenter, ${name}! Registration successful! Please login to continue., 'success');
+                    showNotification(`Welcome to JobCenter, ${name}! Registration successful! Please login to continue.`, 'success');
                     
                     // Clear form
                     form.reset();
@@ -616,7 +617,7 @@ document.getElementById('registration-form').addEventListener('submit', async fu
                     break;
                 }
             } catch (err) {
-                console.log(Error with ${tableName}:, err);
+                console.log(`Error with ${tableName}:`, err);
             }
         }
         
@@ -663,7 +664,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
                     .limit(1);
                 
                 if (!error && data && data.length > 0) {
-                    showNotification(Welcome back, ${data[0].name}!, 'success');
+                    showNotification(`Welcome back, ${data[0].name}!`, 'success');
                     
                     // Set session and redirect
                     setUserSession(userType, data[0]);
@@ -680,7 +681,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
                     break;
                 }
             } catch (err) {
-                console.log(Error with ${tableName}:, err);
+                console.log(`Error with ${tableName}:`, err);
             }
         }
         
@@ -732,6 +733,7 @@ window.jobCenterLogout = function() {
     clearUserSession();
     window.location.replace(window.location.pathname.split('/').pop() || 'index.html');
 };
+
     </script>
 </body>
 </html>
